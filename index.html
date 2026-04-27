@@ -207,11 +207,11 @@
                 setFormData({ ...formData, [field]: value.toUpperCase() });
             };
 
-            // SOLUCIÓN DEFINITIVA WHATSAPP
+            // REPARACIÓN WHATSAPP: USO DE API OFICIAL Y TARGET TOP PARA SALIR DE IFRAMES
             const openWhatsApp = (url) => {
                 const link = document.createElement('a');
                 link.href = url;
-                link.target = '_blank';
+                link.target = '_top'; // Crucial para saltar el contenedor de previsualización
                 link.rel = 'noopener noreferrer';
                 document.body.appendChild(link);
                 link.click();
@@ -273,10 +273,9 @@
             const sendWhatsAppBackup = () => {
                 const data = JSON.stringify({tasks, expenses});
                 const msg = encodeURIComponent("BACKUP FONTANERIA JUMIANJE:\n\n" + data);
-                openWhatsApp(`https://wa.me/?text=${msg}`);
+                openWhatsApp(`https://api.whatsapp.com/send?text=${msg}`);
             };
 
-            // FUNCIÓN ACTUALIZADA PARA LISTADO PENDIENTE
             const sendPendingListWhatsApp = () => {
                 const pendingTasks = tasks.filter(t => t.status === 'pending');
                 if (pendingTasks.length === 0) {
@@ -306,7 +305,7 @@
 
                 text += `⚡ _Generado por Gestor JUMIANJE_`;
                 const msg = encodeURIComponent(text);
-                openWhatsApp(`https://wa.me/?text=${msg}`);
+                openWhatsApp(`https://api.whatsapp.com/send?text=${msg}`);
             };
 
             const handleRestore = () => {
@@ -551,10 +550,9 @@
                                                     {task.phone && (
                                                         <button onClick={() => {
                                                             const cleanPhone = task.phone.replace(/\D/g, '');
-                                                            // Forzamos prefijo de España 34 si tiene 9 dígitos
                                                             const fullPhone = cleanPhone.length === 9 ? `34${cleanPhone}` : cleanPhone;
                                                             const msgText = "Hola, ¿estás en casa para pasar a ver lo de fontanería? Gracias.";
-                                                            openWhatsApp(`https://wa.me/${fullPhone}?text=${encodeURIComponent(msgText)}`);
+                                                            openWhatsApp(`https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(msgText)}`);
                                                         }} className="btn-press p-1">
                                                             <SVGIcon name="whatsapp" color="#22c55e" size={28} />
                                                         </button>
@@ -595,6 +593,7 @@
                         )}
                     </main>
 
+                    {/* MODALES DE EDICIÓN Y GASTOS - Mantenidos igual pero con retoques de interactividad */}
                     {editCobrado && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
