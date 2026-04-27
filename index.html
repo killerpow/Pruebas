@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FONTANERIA JUMIAN - Oficial</title>
+    <title>FONTANERIA JUMIANJE - Oficial</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -111,7 +111,7 @@
                 save: <g><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></g>,
                 trash: <g><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></g>,
                 package: <g><path d="M16.5 9.4 7.5 4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/></g>,
-                whatsapp: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-10.3 8.38 8.38 0 0 1 3.8.9L21 4.5ZM17 13c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.5.1-.2.3-.6.8-.7.9-.1.2-.2.2-.4.1s-.9-.3-1.7-1c-.6-.5-1-1.1-1.2-1.3-.2-.2-.03-.4.1-.5l.3-.4.2-.3c.1-.2 0-.3-.1-.4-.1-.1-.5-1.2-.7-1.6-.1-.4-.3-.3-.5-.3h-.4c-.2 0-.5.1-.8.4-.3.3-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.4 3.9 3.4.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.2-.3-.3-.6-.4Z"/>,
+                whatsapp: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-103 8.38 8.38 0 0 1 3.8.9L21 4.5ZM17 13c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.5.1-.2.3-.6.8-.7.9-.1.2-.2.2-.4.1s-.9-.3-1.7-1c-.6-.5-1-1.1-1.2-1.3-.2-.2-.03-.4.1-.5l.3-.4.2-.3c.1-.2 0-.3-.1-.4-.1-.1-.5-1.2-.7-1.6-.1-.4-.3-.3-.5-.3h-.4c-.2 0-.5.1-.8.4-.3.3-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.4 3.9 3.4.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.2-.3-.3-.6-.4Z"/>,
                 undo: <g><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></g>,
                 download: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></g>,
                 shield: <g><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g>,
@@ -150,8 +150,8 @@
             useEffect(() => {
                 const loadData = () => {
                     try {
-                        const t = localStorage.getItem('pro_tasks_v12');
-                        const e = localStorage.getItem('pro_expenses_v12');
+                        const t = localStorage.getItem('pro_tasks_v13');
+                        const e = localStorage.getItem('pro_expenses_v13');
                         if(t) setTasks(JSON.parse(t));
                         if(e) setExpenses(JSON.parse(e));
                     } catch (err) { console.error(err); }
@@ -160,8 +160,8 @@
             }, []);
 
             useEffect(() => {
-                localStorage.setItem('pro_tasks_v12', JSON.stringify(tasks));
-                localStorage.setItem('pro_expenses_v12', JSON.stringify(expenses));
+                localStorage.setItem('pro_tasks_v13', JSON.stringify(tasks));
+                localStorage.setItem('pro_expenses_v13', JSON.stringify(expenses));
             }, [tasks, expenses]);
 
             const showAlert = (msg) => {
@@ -176,6 +176,13 @@
 
             const handleInputChange = (field, value) => {
                 setFormData({ ...formData, [field]: value.toUpperCase() });
+            };
+
+            const openWhatsApp = (url) => {
+                // Función auxiliar para intentar abrir WhatsApp forzadamente
+                const win = window.open(url, '_blank');
+                if (win) win.focus();
+                else window.location.assign(url);
             };
 
             const handleSaveTask = (e) => {
@@ -226,15 +233,14 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `backup_gestorpro_${new Date().toLocaleDateString()}.json`;
+                a.download = `backup_jumianje_${new Date().toLocaleDateString()}.json`;
                 a.click();
             };
 
             const sendWhatsAppBackup = () => {
                 const data = JSON.stringify({tasks, expenses});
-                const msg = encodeURIComponent("MI BACKUP GESTOR PRO:\n\n" + data);
-                // Usamos el API de WhatsApp directo para forzar apertura de app
-                window.location.href = `https://wa.me/?text=${msg}`;
+                const msg = encodeURIComponent("BACKUP FONTANERIA JUMIANJE:\n\n" + data);
+                openWhatsApp(`https://wa.me/?text=${msg}`);
             };
 
             const sendPendingListWhatsApp = () => {
@@ -244,33 +250,28 @@
                     return;
                 }
 
-                let text = `🛠️ *FONTANERIA JUMIAN* 🛠️\n`;
+                let text = `🛠️ *FONTANERIA JUMIANJE* 🛠️\n`;
                 text += `━━━━━━━━━━━━━━\n`;
-                text += `📋 *LISTADO DE TRABAJOS PENDIENTES*\n\n`;
+                text += `📋 *TRABAJOS PENDIENTES*\n\n`;
 
                 pendingTasks.forEach((t, i) => {
-                    text += `📌 *TRABAJO #${i+1}*\n`;
-                    text += `👤 *Cliente:* ${t.clientName}\n`;
-                    if (t.phone) text += `📞 *Teléfono:* ${t.phone}\n`;
-                    if (t.jobType) text += `🛠️ *Tarea:* ${t.jobType}\n`;
+                    text += `📌 *${i+1}. ${t.clientName}*\n`;
+                    if (t.phone) text += `📞 ${t.phone}\n`;
+                    if (t.jobType) text += `🛠️ ${t.jobType}\n`;
                     
                     if (t.materials) {
                         const mList = cleanMaterials(t.materials);
                         if (mList.length > 0) {
-                            text += `📦 *Materiales/Notas:*\n`;
-                            mList.forEach(m => {
-                                text += `   - ${m}\n`;
-                            });
+                            text += `📦 *Materiales:*\n`;
+                            mList.forEach(m => { text += `   - ${m}\n`; });
                         }
                     }
                     text += `──────────────────\n\n`;
                 });
 
-                text += `⚡ _Generado por Gestor Pro_`;
-
+                text += `⚡ _Generado por Gestor JUMIANJE_`;
                 const msg = encodeURIComponent(text);
-                // Usamos el API de WhatsApp directo para forzar apertura de app
-                window.location.href = `https://wa.me/?text=${msg}`;
+                openWhatsApp(`https://wa.me/?text=${msg}`);
             };
 
             const handleRestore = () => {
@@ -334,7 +335,7 @@
                     <header className="bg-slate-900/80 backdrop-blur-md p-6 sticky top-0 z-50 flex justify-between items-center border-b border-white/5">
                         <div className="flex items-center gap-3">
                             <SVGIcon name="hammer" color="#3b82f6" size={28} />
-                            <h1 className="font-black text-xl italic uppercase text-white tracking-tighter">FONTANERIA JUMIAN</h1>
+                            <h1 className="font-black text-xl italic uppercase text-white tracking-tighter">FONTANERIA JUMIANJE</h1>
                             <button onClick={sendPendingListWhatsApp} className="btn-press ml-1 bg-green-600/20 p-2 rounded-full border border-green-500/30">
                                 <SVGIcon name="whatsapp" color="#22c55e" size={22} />
                             </button>
@@ -368,20 +369,20 @@
                         {view === 'backups' ? (
                             <div className="space-y-6">
                                 <div className="copy-section-card space-y-4">
-                                    <h3 className="text-sm font-black uppercase text-white">COMPARTIR LISTADO COMPLETO</h3>
+                                    <h3 className="text-sm font-black uppercase text-white">COMPARTIR TODO</h3>
                                     <button onClick={sendWhatsAppBackup} className="w-full bg-[#2e7d32] hover:bg-green-700 p-5 rounded-2xl flex items-center justify-center gap-3 transition-colors btn-press">
                                         <SVGIcon name="messageSquare" size={22} color="white" />
-                                        <span className="font-black text-[12px] text-white">ENVIAR TODO (JSON WhatsApp)</span>
+                                        <span className="font-black text-[12px] text-white">ENVIAR JSON POR WHATSAPP</span>
                                     </button>
                                     
                                     <div className="grid grid-cols-2 gap-3">
                                         <button onClick={downloadBackup} className="bg-blue-700 p-5 rounded-[1.5rem] flex flex-col items-center gap-2 btn-press">
                                             <SVGIcon name="download" size={24} color="white" />
-                                            <span className="text-[9px] font-black uppercase text-white">DESCARGAR JSON</span>
+                                            <span className="text-[9px] font-black uppercase text-white">DESCARGAR ARCHIVO</span>
                                         </button>
-                                        <button onClick={() => showAlert("BACKUP DE CÓDIGO GENERADO")} className="bg-[#2c3444] p-5 rounded-[1.5rem] flex flex-col items-center gap-2 btn-press">
+                                        <button onClick={() => showAlert("SISTEMA ACTUALIZADO")} className="bg-[#2c3444] p-5 rounded-[1.5rem] flex flex-col items-center gap-2 btn-press">
                                             <SVGIcon name="shield" size={24} color="#94a3b8" />
-                                            <span className="text-[9px] font-black uppercase text-white">BACKUP CÓDIGO</span>
+                                            <span className="text-[9px] font-black uppercase text-white">ESTADO SEGURO</span>
                                         </button>
                                     </div>
                                 </div>
@@ -390,7 +391,7 @@
                                     <h3 className="text-lg font-black uppercase text-white">RESTAURAR</h3>
                                     <div className="dotted-upload" onClick={() => document.getElementById('fileInput').click()}>
                                         <SVGIcon name="file" size={32} color="#3b82f6" />
-                                        <span className="text-[10px] font-black uppercase text-slate-400">ELEGIR ARCHIVO</span>
+                                        <span className="text-[10px] font-black uppercase text-slate-400">ELEGIR ARCHIVO .JSON</span>
                                         <input type="file" id="fileInput" className="hidden" onChange={(e) => {
                                             const file = e.target.files[0];
                                             if (file) {
@@ -402,7 +403,7 @@
                                     </div>
                                     <div className="space-y-4">
                                         <div className="bg-[#121212] rounded-3xl p-4 border border-white/5">
-                                            <textarea className="w-full h-32 bg-transparent border-none text-xs text-slate-400 no-scrollbar" placeholder="Pegar código de WhatsApp aquí..." value={restoreCode} onChange={(e) => setRestoreCode(e.target.value)} />
+                                            <textarea className="w-full h-32 bg-transparent border-none text-xs text-slate-400 no-scrollbar" placeholder="Pegar código de backup aquí..." value={restoreCode} onChange={(e) => setRestoreCode(e.target.value)} />
                                         </div>
                                         <button onClick={handleRestore} className="w-full bg-blue-700 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-wider btn-press">RESTAURAR AHORA</button>
                                     </div>
@@ -440,7 +441,7 @@
                                         <span className="text-[8px] text-indigo-200 uppercase font-bold mt-2 opacity-60">Pulsa para poner todo a cero</span>
                                     </div>
                                 </button>
-
+                                
                                 <div className="grid grid-cols-2 gap-3 opacity-60">
                                     <div className="bg-white/5 p-4 rounded-2xl text-center border border-dashed border-blue-500/20">
                                         <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pte. Cobro</p>
@@ -458,7 +459,7 @@
                                     </div>
                                     <div className="space-y-2">
                                         {expenses.length === 0 ? (
-                                            <p className="text-center py-6 text-[10px] text-slate-600 font-bold uppercase">Sin gastos en este periodo</p>
+                                            <p className="text-center py-6 text-[10px] text-slate-600 font-bold uppercase">Sin gastos registrados</p>
                                         ) : expenses.map(exp => (
                                             <div key={exp.id} className={`flex items-center justify-between p-4 rounded-2xl transition-all ${exp.isPaid ? 'bg-slate-800/30 opacity-40' : 'bg-red-500/10 border border-red-500/20'}`}>
                                                 <div className="flex-1">
@@ -509,11 +510,14 @@
                                                     {task.phone && (
                                                         <button onClick={() => {
                                                             const cleanPhone = task.phone.replace(/\D/g, '');
-                                                            // Forzamos el prefijo 34 si tiene 9 dígitos (formato España)
-                                                            const formattedPhone = cleanPhone.length === 9 ? `34${cleanPhone}` : cleanPhone;
-                                                            const customMsg = encodeURIComponent("Buenas, ¿estás en casa para acercarnos en un rato a ver el trabajo? Gracias");
-                                                            // Usamos window.location.href para asegurar disparo de app
-                                                            window.location.href = `https://wa.me/${formattedPhone}?text=${customMsg}`;
+                                                            // Asegurar prefijo 34 para España si faltan los dígitos iniciales
+                                                            const fullPhone = cleanPhone.length === 9 ? `34${cleanPhone}` : cleanPhone;
+                                                            const msgText = "Hola, ¿estás en casa para pasar a ver lo de fontanería? Gracias.";
+                                                            const encodedMsg = encodeURIComponent(msgText);
+                                                            
+                                                            // Usamos el protocolo directo para móviles y fallback api
+                                                            const waUrl = `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodedMsg}`;
+                                                            openWhatsApp(waUrl);
                                                         }} className="btn-press p-1">
                                                             <SVGIcon name="whatsapp" color="#22c55e" size={28} />
                                                         </button>
@@ -541,7 +545,7 @@
                                                 </div>
                                             </div>
                                             <div className="mt-4 flex gap-2">
-                                                {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-green-700">Finalizar</button>}
+                                                {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-green-700">Hecho</button>}
                                                 {view === 'completed' && <button onClick={() => handleArchivar(task)} className="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-blue-700">Archivar</button>}
                                                 <button onClick={() => { if(confirm("¿Eliminar?")) setTasks(tasks.filter(t=>t.id!==task.id)); }} className="p-3 bg-red-900/40 text-red-500 rounded-xl flex items-center justify-center transition-colors hover:bg-red-800/60">
                                                     <SVGIcon name="trash" size={16} color="#ef4444" />
@@ -557,20 +561,20 @@
                     {editCobrado && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
-                                <h3 className="text-xs font-black text-blue-400 uppercase mb-4">Gestión de Cobro</h3>
+                                <h3 className="text-xs font-black text-blue-400 uppercase mb-4">Añadir Pago</h3>
                                 <div className="grid grid-cols-2 gap-2 mb-6">
                                     <div className="bg-black/20 p-3 rounded-xl">
-                                        <p className="text-[8px] text-white/40 uppercase">PVP Total</p>
+                                        <p className="text-[8px] text-white/40 uppercase">PVP</p>
                                         <p className="text-lg font-black text-white">{editCobrado.totalPVP}€</p>
                                     </div>
                                     <div className="bg-black/20 p-3 rounded-xl">
-                                        <p className="text-[8px] text-white/40 uppercase">Ya Cobrado</p>
+                                        <p className="text-[8px] text-white/40 uppercase">Pagado</p>
                                         <p className="text-lg font-black text-green-500">{editCobrado.currentPaid}€</p>
                                     </div>
                                 </div>
                                 <div className="space-y-2 mb-6 text-left">
-                                    <p className="text-[9px] uppercase text-slate-500 font-bold ml-2">Añadir Entrega a Cuenta</p>
-                                    <input type="number" autoFocus placeholder="0.00" onFocus={(e) => e.target.select()} className="w-full text-3xl font-black text-center p-4 rounded-xl bg-black/40" id="entregaInput" />
+                                    <p className="text-[9px] uppercase text-slate-500 font-bold ml-2">¿Cuánto entrega?</p>
+                                    <input type="number" autoFocus placeholder="0" onFocus={(e) => e.target.select()} className="w-full text-3xl font-black text-center p-4 rounded-xl bg-black/40" id="entregaInput" />
                                 </div>
                                 <div className="flex gap-2">
                                     <button onClick={() => setEditCobrado(null)} className="flex-1 py-3 text-white/40 font-bold">Cerrar</button>
@@ -579,8 +583,8 @@
                                             const nuevoTotal = (parseFloat(editCobrado.currentPaid) || 0) + entrega;
                                             setTasks(tasks.map(t => t.id === editCobrado.id ? {...t, paidAmount: nuevoTotal.toString()} : t));
                                             setEditCobrado(null);
-                                            showAlert(`✅ +${entrega}€ AÑADIDOS`);
-                                        }} className="flex-1 bg-green-600 py-3 rounded-xl font-black uppercase text-xs">Sumar Cobro</button>
+                                            showAlert(`✅ +${entrega}€ SUMADOS`);
+                                        }} className="flex-1 bg-green-600 py-3 rounded-xl font-black uppercase text-xs">Ok</button>
                                 </div>
                             </div>
                         </div>
@@ -595,7 +599,7 @@
                                     <button onClick={() => {
                                             setTasks(tasks.map(t => t.id === editMoney.id ? {...t, [editMoney.type]: editMoney.value} : t));
                                             setEditMoney(null);
-                                        }} className="flex-1 bg-blue-600 py-3 rounded-xl font-black uppercase text-xs">Ok</button>
+                                        }} className="flex-1 bg-blue-600 py-3 rounded-xl font-black uppercase text-xs">Guardar</button>
                                 </div>
                             </div>
                         </div>
@@ -604,24 +608,24 @@
                     {showForm && (
                         <div className="fixed inset-0 bg-black/90 z-[200] p-6 flex items-center justify-center backdrop-blur-md">
                             <form onSubmit={handleSaveTask} className="bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 space-y-4 border border-white/10 shadow-2xl">
-                                <h2 className="font-black uppercase text-blue-400 mb-2">{editingId ? 'Editar Cliente' : 'Nuevo Trabajo'}</h2>
+                                <h2 className="font-black uppercase text-blue-400 mb-2">{editingId ? 'Editar Cliente' : 'Nuevo Cliente'}</h2>
                                 <input placeholder="Nombre Cliente" className="w-full p-4 rounded-xl" value={formData.clientName} onChange={e=>handleInputChange('clientName', e.target.value)} required />
                                 <input type="tel" placeholder="Teléfono" className="w-full p-4 rounded-xl" value={formData.phone} onChange={e=>handleInputChange('phone', e.target.value)} />
-                                <input placeholder="¿Qué hay que hacer?" className="w-full p-4 rounded-xl" value={formData.jobType} onChange={e=>handleInputChange('jobType', e.target.value)} />
-                                <textarea placeholder="Materiales / Notas..." className="w-full p-4 rounded-xl h-20" value={formData.materials} onChange={e=>handleInputChange('materials', e.target.value)} />
+                                <input placeholder="¿Qué tarea?" className="w-full p-4 rounded-xl" value={formData.jobType} onChange={e=>handleInputChange('jobType', e.target.value)} />
+                                <textarea placeholder="Materiales o Notas..." className="w-full p-4 rounded-xl h-20" value={formData.materials} onChange={e=>handleInputChange('materials', e.target.value)} />
                                 <div className="flex gap-4">
                                     <div className="flex-1">
                                         <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Total PVP</p>
-                                        <input placeholder="PVP" className="w-full p-4 rounded-xl text-center" value={formData.totalAmount} onFocus={(e) => e.target.select()} onChange={e=>setFormData({...formData, totalAmount:e.target.value})} />
+                                        <input placeholder="0" className="w-full p-4 rounded-xl text-center" value={formData.totalAmount} onFocus={(e) => e.target.select()} onChange={e=>setFormData({...formData, totalAmount:e.target.value})} />
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Cobrado</p>
-                                        <input placeholder="Cobrado" className="w-full p-4 rounded-xl text-center" value={formData.paidAmount} onFocus={(e) => e.target.select()} onChange={e=>setFormData({...formData, paidAmount:e.target.value})} />
+                                        <input placeholder="0" className="w-full p-4 rounded-xl text-center" value={formData.paidAmount} onFocus={(e) => e.target.select()} onChange={e=>setFormData({...formData, paidAmount:e.target.value})} />
                                     </div>
                                 </div>
                                 <div className="flex gap-2 mt-4">
                                     <button type="button" onClick={()=>{setShowForm(false); setEditingId(null);}} className="flex-1 bg-slate-800 p-4 rounded-xl font-bold uppercase text-xs">Cancelar</button>
-                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black uppercase text-xs">{editingId ? 'ACTUALIZAR' : 'GUARDAR'}</button>
+                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black uppercase text-xs">{editingId ? 'ACTUALIZAR' : 'CREAR'}</button>
                                 </div>
                             </form>
                         </div>
@@ -630,8 +634,8 @@
                     {showExpenseForm && (
                         <div className="fixed inset-0 bg-black/90 z-[200] p-6 flex items-center justify-center backdrop-blur-md">
                             <div className="bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 space-y-4 border border-white/10 text-center shadow-2xl">
-                                <h3 className="font-black text-red-500 uppercase">Anotar Gasto</h3>
-                                <input placeholder="Concepto" className="w-full p-4 rounded-xl" value={expenseData.concept} onChange={e=>setExpenseData({...expenseData, concept:e.target.value.toUpperCase()})} />
+                                <h3 className="font-black text-red-500 uppercase">Nuevo Gasto</h3>
+                                <input placeholder="¿En qué?" className="w-full p-4 rounded-xl" value={expenseData.concept} onChange={e=>setExpenseData({...expenseData, concept:e.target.value.toUpperCase()})} />
                                 <input placeholder="Importe €" className="w-full p-4 rounded-xl text-center text-2xl font-black" value={expenseData.amount} onFocus={(e) => e.target.select()} onChange={e=>setExpenseData({...expenseData, amount:e.target.value})} />
                                 <button onClick={()=>{
                                     if(!expenseData.amount) return;
