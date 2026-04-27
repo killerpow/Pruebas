@@ -16,9 +16,10 @@
             font-family: 'Inter', sans-serif; 
             transition: background-color 0.4s ease;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
             color: #f8fafc;
             background-color: #0f172a;
+            margin: 0;
+            overflow-x: hidden;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -37,6 +38,21 @@
 
         .btn-press:active { transform: scale(0.96); opacity: 0.8; }
         
+        @keyframes pulse-red {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .deuda-badge {
+            animation: pulse-red 1.5s infinite ease-in-out;
+            background: #ef4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
         .materials-box {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 1.2rem;
@@ -57,48 +73,56 @@
         .card-completed { background: linear-gradient(145deg, #065f46 0%, #042f2e 100%); border: 1px solid rgba(16, 185, 129, 0.2); }
         .card-archived { background: linear-gradient(145deg, #475569 0%, #1e293b 100%); border: 1px solid rgba(255, 255, 255, 0.1); }
 
-        .text-tab-pending { color: #60a5fa; }
-        .text-tab-completed { color: #4ade80; }
-        .text-tab-archived { color: #94a3b8; }
-        .text-tab-balance { color: #c084fc; }
-        .text-tab-backups { color: #fb923c; }
-
         .client-name { font-weight: 900; text-transform: uppercase; }
+
+        .copy-section-card {
+            background: #1e1e1e;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .dotted-upload {
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+        const { useState, useEffect, useMemo, useRef } = React;
 
         const SVGIcon = ({ name, color = "currentColor", size = 24 }) => {
             const icons = {
-                hammer: <path d="m15 5 4 4-11 11-4-4L15 5Z"/><path d="m21 2-5 5"/><path d="m17 2 5 5"/><path d="m7 12-5 5"/><path d="m2 17 5 5"/>,
-                banknote: <rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>,
-                userPlus: <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="16" x2="22" y1="11" y2="11"/>,
-                clock: <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>,
+                hammer: <g><path d="m15 5 4 4-11 11-4-4L15 5Z"/><path d="m21 2-5 5"/><path d="m17 2 5 5"/><path d="m7 12-5 5"/><path d="m2 17 5 5"/></g>,
+                banknote: <g><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></g>,
+                userPlus: <g><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="16" x2="22" y1="11" y2="11"/></g>,
+                clock: <g><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></g>,
                 check: <polyline points="20 6 9 17 4 12"/>,
-                archive: <rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>,
-                chart: <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>,
-                save: <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>,
-                trash: <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>,
-                package: <path d="M16.5 9.4 7.5 4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>,
+                archive: <g><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></g>,
+                chart: <g><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></g>,
+                save: <g><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></g>,
+                trash: <g><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></g>,
+                package: <g><path d="M16.5 9.4 7.5 4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/></g>,
                 whatsapp: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-10.3 8.38 8.38 0 0 1 3.8.9L21 4.5ZM17 13c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.5.1-.2.3-.6.8-.7.9-.1.2-.2.2-.4.1s-.9-.3-1.7-1c-.6-.5-1-1.1-1.2-1.3-.2-.2-.03-.4.1-.5l.3-.4.2-.3c.1-.2 0-.3-.1-.4-.1-.1-.5-1.2-.7-1.6-.1-.4-.3-.3-.5-.3h-.4c-.2 0-.5.1-.8.4-.3.3-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.4 3.9 3.4.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.2-.3-.3-.6-.4Z"/>,
-                phone: <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                undo: <g><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></g>,
+                download: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></g>,
+                shield: <g><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g>,
+                upload: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></g>,
+                file: <g><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></g>,
+                messageSquare: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>,
+                edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></g>
             };
 
             return (
-                <svg 
-                    width={size} 
-                    height={size} 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke={color} 
-                    strokeWidth="2.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                >
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     {icons[name] || null}
                 </svg>
             );
@@ -109,10 +133,12 @@
             const [expenses, setExpenses] = useState([]);
             const [view, setView] = useState('pending');
             const [showForm, setShowForm] = useState(false);
+            const [editingId, setEditingId] = useState(null); 
             const [showExpenseForm, setShowExpenseForm] = useState(false);
-            const [editingTaskId, setEditingTaskId] = useState(null);
-            const [importText, setImportText] = useState('');
             const [alertMsg, setAlertMsg] = useState(null);
+            const [editMoney, setEditMoney] = useState(null); 
+            const [editCobrado, setEditCobrado] = useState(null); // Nuevo estado para menú de cobro
+            const [restoreCode, setRestoreCode] = useState('');
             
             const [formData, setFormData] = useState({
                 clientName: '', phone: '', address: '', jobType: '', notes: '', materials: '', totalAmount: '', paidAmount: ''
@@ -121,11 +147,15 @@
             const [expenseData, setExpenseData] = useState({ concept: '', amount: '' });
 
             useEffect(() => {
-                const load = (key, def) => {
-                    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
+                const loadData = () => {
+                    try {
+                        const t = localStorage.getItem('pro_tasks_v12');
+                        const e = localStorage.getItem('pro_expenses_v12');
+                        if(t) setTasks(JSON.parse(t));
+                        if(e) setExpenses(JSON.parse(e));
+                    } catch (err) { console.error(err); }
                 };
-                setTasks(load('pro_tasks_v12', []));
-                setExpenses(load('pro_expenses_v12', []));
+                loadData();
             }, []);
 
             useEffect(() => {
@@ -133,103 +163,195 @@
                 localStorage.setItem('pro_expenses_v12', JSON.stringify(expenses));
             }, [tasks, expenses]);
 
+            const showAlert = (msg) => {
+                setAlertMsg(msg);
+                setTimeout(() => setAlertMsg(null), 3000);
+            };
+
             const cleanMaterials = (text) => {
                 if (!text || typeof text !== 'string') return [];
                 return text.split(/[,\.\;\n]/).map(m => m.trim()).filter(m => m.length > 0);
             };
 
-            const showAlert = (msg) => {
-                setAlertMsg(msg);
-                setTimeout(() => setAlertMsg(null), 4000);
-            };
-
-            const openWhatsApp = (phone) => {
-                if (!phone) return;
-                const cleanPhone = phone.replace(/\D/g, '');
-                const msg = encodeURIComponent("Buenas tardes. En un ratillo estaremos en casa si estáis esta tarde allí. Gracias");
-                window.open(`https://wa.me/${cleanPhone.startsWith('34') ? cleanPhone : '34' + cleanPhone}?text=${msg}`, '_blank');
+            const handleInputChange = (field, value) => {
+                setFormData({ ...formData, [field]: value.toUpperCase() });
             };
 
             const handleSaveTask = (e) => {
                 e.preventDefault();
                 const finalData = { ...formData, totalAmount: formData.totalAmount || '0', paidAmount: formData.paidAmount || '0' };
-                if (editingTaskId) {
-                    setTasks(tasks.map(t => t.id === editingTaskId ? { ...finalData, id: t.id, status: t.status } : t));
+                
+                if (editingId) {
+                    setTasks(tasks.map(t => t.id === editingId ? { ...finalData, id: editingId, status: t.status } : t));
+                    showAlert("✅ TRABAJO ACTUALIZADO");
                 } else {
                     setTasks([{ ...finalData, id: Date.now(), status: 'pending' }, ...tasks]);
+                    showAlert("✅ TRABAJO GUARDADO");
                 }
+                
                 setShowForm(false);
-                setEditingTaskId(null);
+                setEditingId(null);
+                setFormData({ clientName: '', phone: '', address: '', jobType: '', notes: '', materials: '', totalAmount: '', paidAmount: '' });
             };
 
-            const handleResetBalance = () => {
-                const pendingDebt = tasks.reduce((acc, t) => {
-                    const diff = (parseFloat(t.totalAmount) || 0) - (parseFloat(t.paidAmount) || 0);
-                    return acc + (diff > 0 ? diff : 0);
-                }, 0);
-                if (pendingDebt > 0) {
-                    showAlert(`🚫 Faltan ${pendingDebt.toFixed(2)}€ por cobrar.`);
+            const handleEditTask = (task) => {
+                setFormData({
+                    clientName: task.clientName || '',
+                    phone: task.phone || '',
+                    address: task.address || '',
+                    jobType: task.jobType || '',
+                    notes: task.notes || '',
+                    materials: task.materials || '',
+                    totalAmount: task.totalAmount || '0',
+                    paidAmount: task.paidAmount || '0'
+                });
+                setEditingId(task.id);
+                setShowForm(true);
+            };
+
+            const handleArchivar = (task) => {
+                const deuda = (parseFloat(task.totalAmount) || 0) - (parseFloat(task.paidAmount) || 0);
+                if (deuda > 0) {
+                    showAlert(`⚠️ NO SE PUEDE ARCHIVAR: DEBE ${deuda.toFixed(2)}€`);
                     return;
                 }
-                if (confirm("¿Poner gastos a cero?")) {
-                    setExpenses([]); 
-                    showAlert("✅ Gastos reiniciados");
+                setTasks(tasks.map(t => t.id === task.id ? { ...t, status: 'archived' } : t));
+                showAlert("✅ TRABAJO ARCHIVADO");
+            };
+
+            const downloadBackup = () => {
+                const data = JSON.stringify({tasks, expenses});
+                const blob = new Blob([data], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `backup_gestorpro_${new Date().toLocaleDateString()}.json`;
+                a.click();
+            };
+
+            const sendWhatsAppBackup = () => {
+                const data = JSON.stringify({tasks, expenses});
+                const msg = encodeURIComponent("MI BACKUP GESTOR PRO:\n\n" + data);
+                window.open(`https://wa.me/?text=${msg}`, '_blank');
+            };
+
+            const handleRestore = () => {
+                try {
+                    const parsed = JSON.parse(restoreCode);
+                    if(parsed.tasks) setTasks(parsed.tasks);
+                    if(parsed.expenses) setExpenses(parsed.expenses);
+                    showAlert("✅ DATOS RESTAURADOS CORRECTAMENTE");
+                    setRestoreCode('');
+                } catch(e) {
+                    showAlert("❌ CÓDIGO NO VÁLIDO");
                 }
             };
 
             const totals = useMemo(() => {
-                const in_ = tasks.reduce((acc, t) => acc + (parseFloat(t.paidAmount) || 0), 0);
-                const out_ = expenses.reduce((acc, e) => acc + (parseFloat(e.amount) || 0), 0);
-                const pending_ = tasks.reduce((acc, t) => {
+                const inVal = tasks.reduce((acc, t) => acc + (parseFloat(t.paidAmount) || 0), 0);
+                const outVal = expenses.reduce((acc, e) => acc + (parseFloat(e.amount) || 0), 0);
+                const pendingVal = tasks.reduce((acc, t) => {
                     const diff = (parseFloat(t.totalAmount) || 0) - (parseFloat(t.paidAmount) || 0);
                     return acc + (diff > 0 ? diff : 0);
                 }, 0);
-                return { in: in_, out: out_, bal: in_ - out_, pending: pending_ };
+                // Ganancia potencial = Todos los PVP - Gastos
+                const potentialIn = tasks.reduce((acc, t) => acc + (parseFloat(t.totalAmount) || 0), 0);
+                return { in: inVal, out: outVal, bal: inVal - outVal, pending: pendingVal, potential: potentialIn - outVal };
             }, [tasks, expenses]);
 
             return (
-                <div className="min-h-screen flex flex-col pb-20 max-w-md mx-auto">
+                <div className="min-h-screen flex flex-col pb-20 max-w-md mx-auto relative">
                     {alertMsg && (
-                        <div className="fixed top-4 left-4 right-4 z-[200] bg-red-600 text-white p-4 rounded-2xl font-black text-center shadow-2xl">
+                        <div className="fixed top-4 left-4 right-4 z-[300] bg-blue-600 text-white p-4 rounded-2xl font-black text-center shadow-2xl">
                             {alertMsg}
                         </div>
                     )}
 
-                    <header className="bg-black/40 backdrop-blur-md p-6 sticky top-0 z-50 flex justify-between items-center border-b border-white/5">
+                    <header className="bg-slate-900/80 backdrop-blur-md p-6 sticky top-0 z-50 flex justify-between items-center border-b border-white/5">
                         <div className="flex items-center gap-3">
-                            <div className="bg-transparent flex items-center justify-center">
-                                <SVGIcon name="hammer" color="#3b82f6" size={28} />
-                            </div>
+                            <SVGIcon name="hammer" color="#3b82f6" size={28} />
                             <h1 className="font-black text-xl italic uppercase text-white">GESTOR PRO</h1>
                         </div>
                         <div className="flex gap-4">
-                            <button onClick={() => setShowExpenseForm(true)} className="bg-transparent flex items-center justify-center btn-press">
+                            <button onClick={() => setShowExpenseForm(true)} className="btn-press">
                                 <SVGIcon name="banknote" color="#ef4444" size={28} />
                             </button>
-                            <button onClick={() => { setEditingTaskId(null); setFormData({ clientName: '', phone: '', address: '', jobType: '', notes: '', materials: '', totalAmount: '', paidAmount: '' }); setShowForm(true); }} className="bg-transparent flex items-center justify-center btn-press">
+                            <button onClick={() => { setEditingId(null); setFormData({clientName:'', phone:'', address:'', jobType:'', notes:'', materials:'', totalAmount:'', paidAmount:''}); setShowForm(true); }} className="btn-press">
                                 <SVGIcon name="userPlus" color="#22c55e" size={28} />
                             </button>
                         </div>
                     </header>
 
-                    <nav className="bg-black/20 border-b border-white/5 sticky top-[85px] z-40 p-2 flex gap-1">
+                    <nav className="bg-slate-900/90 border-b border-white/5 sticky top-[85px] z-40 p-2 flex gap-1">
                         {[
-                            {id:'pending', icon:'clock', label:'Espera', class: 'text-tab-pending', hex: '#60a5fa'}, 
-                            {id:'completed', icon:'check', label:'Hechos', class: 'text-tab-completed', hex: '#4ade80'}, 
-                            {id:'archived', icon:'archive', label:'Archivo', class: 'text-tab-archived', hex: '#94a3b8'}, 
-                            {id:'balance', icon:'chart', label:'Balance', class: 'text-tab-balance', hex: '#c084fc'}, 
-                            {id:'backups', icon:'save', label:'Copias', class: 'text-tab-backups', hex: '#fb923c'}
+                            {id:'pending', icon:'clock', label:'Espera', hex: '#60a5fa'}, 
+                            {id:'completed', icon:'check', label:'Hechos', hex: '#4ade80'}, 
+                            {id:'archived', icon:'archive', label:'Archivo', hex: '#94a3b8'}, 
+                            {id:'balance', icon:'chart', label:'Balance', hex: '#c084fc'}, 
+                            {id:'backups', icon:'save', label:'Copias', hex: '#fb923c'}
                         ].map(tab => (
                             <button key={tab.id} onClick={() => setView(tab.id)} className={`flex-1 py-2 flex flex-col items-center gap-1 transition-all ${view === tab.id ? 'tab-active opacity-100' : 'opacity-40'}`}>
                                 <SVGIcon name={tab.icon} size={20} color={tab.hex} />
-                                <span className={`text-[10px] font-black uppercase ${tab.class}`}>{tab.label}</span>
+                                <span className={`text-[10px] font-black uppercase`} style={{color: tab.hex}}>{tab.label}</span>
                             </button>
                         ))}
                     </nav>
 
                     <main className="flex-1 p-4">
-                        {view === 'balance' ? (
-                            <div className="space-y-4 animate-in fade-in">
+                        {view === 'backups' ? (
+                            <div className="space-y-6">
+                                <div className="copy-section-card space-y-4">
+                                    <h3 className="text-sm font-black uppercase text-white">COMPARTIR LISTADO</h3>
+                                    <button onClick={sendWhatsAppBackup} className="w-full bg-[#2e7d32] hover:bg-green-700 p-5 rounded-2xl flex items-center justify-center gap-3 transition-colors btn-press">
+                                        <SVGIcon name="messageSquare" size={22} color="white" />
+                                        <span className="font-black text-[12px] text-white">ENVIAR LISTADO + NOTAS (WhatsApp)</span>
+                                    </button>
+                                    
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button onClick={downloadBackup} className="bg-blue-700 p-5 rounded-[1.5rem] flex flex-col items-center gap-2 btn-press">
+                                            <SVGIcon name="download" size={24} color="white" />
+                                            <span className="text-[9px] font-black uppercase text-white">DESCARGAR JSON</span>
+                                        </button>
+                                        <button onClick={() => showAlert("BACKUP DE CÓDIGO GENERADO")} className="bg-[#2c3444] p-5 rounded-[1.5rem] flex flex-col items-center gap-2 btn-press">
+                                            <SVGIcon name="shield" size={24} color="#94a3b8" />
+                                            <span className="text-[9px] font-black uppercase text-white">BACKUP CÓDIGO</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="copy-section-card space-y-6">
+                                    <h3 className="text-lg font-black uppercase text-white">RESTAURAR</h3>
+                                    
+                                    <div className="dotted-upload" onClick={() => document.getElementById('fileInput').click()}>
+                                        <SVGIcon name="file" size={32} color="#3b82f6" />
+                                        <span className="text-[10px] font-black uppercase text-slate-400">ELEGIR ARCHIVO</span>
+                                        <input type="file" id="fileInput" className="hidden" onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onload = (e) => setRestoreCode(e.target.result);
+                                                reader.readAsText(file);
+                                            }
+                                        }} />
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="bg-[#121212] rounded-3xl p-4 border border-white/5">
+                                            <textarea 
+                                                className="w-full h-32 bg-transparent border-none text-xs text-slate-400 no-scrollbar"
+                                                placeholder="Pegar código de WhatsApp aquí..."
+                                                value={restoreCode}
+                                                onChange={(e) => setRestoreCode(e.target.value)}
+                                            />
+                                        </div>
+                                        <button onClick={handleRestore} className="w-full bg-blue-700 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-wider btn-press">
+                                            RESTAURAR AHORA
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : view === 'balance' ? (
+                            <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-white/5 p-4 rounded-2xl text-center">
                                         <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Cobrado</p>
@@ -241,55 +363,57 @@
                                     </div>
                                 </div>
                                 <div className="bg-white/5 p-4 rounded-2xl text-center">
-                                    <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pendiente</p>
+                                    <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pendiente de Cobro</p>
                                     <h2 className="text-xl font-black text-blue-400">{totals.pending.toFixed(2)}€</h2>
                                 </div>
-                                <div className="bg-purple-600/20 p-8 rounded-[2rem] border border-purple-500/30 text-center shadow-xl">
-                                    <p className="text-[11px] font-black text-purple-400 uppercase mb-2">Beneficio Neto</p>
-                                    <h2 className="text-5xl font-black text-white">{totals.bal.toFixed(2)}€</h2>
+                                <div className="bg-purple-600/20 p-6 rounded-[2rem] border border-purple-500/30 text-center shadow-xl">
+                                    <p className="text-[10px] font-black text-purple-400 uppercase mb-1">Beneficio Neto</p>
+                                    <h2 className="text-3xl font-black text-white">{totals.bal.toFixed(2)}€</h2>
                                 </div>
-                                <button onClick={handleResetBalance} className="w-full bg-red-600/20 text-red-500 p-4 rounded-xl font-black uppercase text-[10px] btn-press">REPARTIR Y LIMPIAR GASTOS</button>
-                            </div>
-                        ) : view === 'backups' ? (
-                            <div className="space-y-4 animate-in fade-in">
-                                <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
-                                    <h3 className="text-xs font-black uppercase mb-4 text-center">Exportar Datos</h3>
-                                    <textarea className="w-full h-32 rounded-xl p-4 text-[10px]" readOnly value={JSON.stringify({tasks, expenses})} />
-                                </div>
-                                <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
-                                    <h3 className="text-xs font-black uppercase mb-4 text-center">Importar Copia</h3>
-                                    <textarea placeholder="Pegue aquí el código..." className="w-full h-24 rounded-xl p-4 text-[10px] mb-4" value={importText} onChange={e=>setImportText(e.target.value)} />
-                                    <button onClick={()=>{
-                                        try {
-                                            const p = JSON.parse(importText);
-                                            setTasks(p.tasks || []); setExpenses(p.expenses || []);
-                                            showAlert("✅ Datos restaurados"); setImportText('');
-                                        } catch { showAlert("❌ Código inválido"); }
-                                    }} className="w-full bg-orange-600 p-4 rounded-xl font-black btn-press">RESTAURAR COPIA</button>
+                                <div className="bg-emerald-600/20 p-6 rounded-[2rem] border border-emerald-500/30 text-center shadow-xl">
+                                    <p className="text-[10px] font-black text-emerald-400 uppercase mb-1">Ganancia Potencial</p>
+                                    <h2 className="text-3xl font-black text-white">{totals.potential.toFixed(2)}€</h2>
                                 </div>
                             </div>
                         ) : (
                             <div className="space-y-4">
                                 {tasks.filter(t => t.status === view).map(task => {
-                                    const materialsList = cleanMaterials(task.materials);
-                                    const cardClass = view === 'pending' ? 'card-pending' : view === 'completed' ? 'card-completed' : 'card-archived';
+                                    const deuda = (parseFloat(task.totalAmount) || 0) - (parseFloat(task.paidAmount) || 0);
                                     return (
-                                        <div key={task.id} className={`${cardClass} rounded-[2rem] p-6 shadow-xl relative`}>
+                                        <div key={task.id} className={`${view === 'pending' ? 'card-pending' : view === 'completed' ? 'card-completed' : 'card-archived'} rounded-[2rem] p-6 shadow-xl relative`}>
                                             <div className="flex justify-between items-start mb-1">
-                                                <div>
-                                                    <h4 className="client-name text-lg text-white">{task.clientName}</h4>
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className="client-name text-lg text-white">{task.clientName}</h4>
+                                                        {deuda > 0 && <span className="deuda-badge">DEBE {deuda.toFixed(0)}€</span>}
+                                                    </div>
                                                     <p className="text-xs text-white/40">{task.jobType}</p>
                                                 </div>
-                                                {task.phone && (
-                                                    <button onClick={() => openWhatsApp(task.phone)} className="btn-press">
-                                                        <SVGIcon name="whatsapp" color="#22c55e" size={24} />
+                                                <div className="flex gap-1 items-center">
+                                                    <button onClick={() => handleEditTask(task)} className="btn-press p-2 hover:bg-white/10 rounded-full transition-colors">
+                                                        <SVGIcon name="edit" color="#60a5fa" size={22} />
                                                     </button>
-                                                )}
+
+                                                    {view !== 'pending' && (
+                                                        <button onClick={() => setTasks(tasks.map(t => t.id === task.id ? { ...t, status: view === 'archived' ? 'completed' : 'pending' } : t))} className="btn-press p-1">
+                                                            <SVGIcon name="undo" color="#94a3b8" size={24} />
+                                                        </button>
+                                                    )}
+                                                    {task.phone && (
+                                                        <button onClick={() => {
+                                                            const cleanPhone = task.phone.replace(/\D/g, '');
+                                                            const prefix = cleanPhone.startsWith('34') ? '' : '34';
+                                                            window.open(`https://wa.me/${prefix}${cleanPhone}`, '_blank');
+                                                        }} className="btn-press p-1">
+                                                            <SVGIcon name="whatsapp" color="#22c55e" size={28} />
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                             
-                                            {materialsList.length > 0 && (
+                                            {cleanMaterials(task.materials).length > 0 && (
                                                 <div className="materials-box">
-                                                    {materialsList.map((m, i) => (
+                                                    {cleanMaterials(task.materials).map((m, i) => (
                                                         <div key={i} className="material-row">
                                                             <SVGIcon name="package" size={12} color="#60a5fa" />
                                                             <span className="uppercase font-bold">{m}</span>
@@ -299,20 +423,22 @@
                                             )}
 
                                             <div className="flex gap-4 mt-4">
-                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl">
-                                                    <p className="text-[8px] uppercase text-white/30">Total</p>
+                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" 
+                                                     onClick={() => setEditMoney({ id: task.id, type: 'totalAmount', value: task.totalAmount })}>
+                                                    <p className="text-[8px] uppercase text-white/30">PVP</p>
                                                     <p className="font-bold">{task.totalAmount}€</p>
                                                 </div>
-                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl">
-                                                    <p className="text-[8px] uppercase text-white/30">Pagado</p>
+                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" 
+                                                     onClick={() => setEditCobrado({ id: task.id, currentPaid: task.paidAmount, totalPVP: task.totalAmount })}>
+                                                    <p className="text-[8px] uppercase text-white/30">Cobrado</p>
                                                     <p className="font-bold text-green-400">{task.paidAmount}€</p>
                                                 </div>
                                             </div>
 
                                             <div className="mt-4 flex gap-2">
-                                                {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase">Finalizar</button>}
-                                                {view === 'completed' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'archived'}:t))} className="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px] uppercase">Archivar</button>}
-                                                <button onClick={() => { if(confirm("¿Eliminar?")) setTasks(tasks.filter(t=>t.id!==task.id)); }} className="p-3 bg-red-900/40 text-red-500 rounded-xl flex items-center justify-center">
+                                                {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-green-700">Finalizar</button>}
+                                                {view === 'completed' && <button onClick={() => handleArchivar(task)} className="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-blue-700">Archivar</button>}
+                                                <button onClick={() => { if(confirm("¿Eliminar?")) setTasks(tasks.filter(t=>t.id!==task.id)); }} className="p-3 bg-red-900/40 text-red-500 rounded-xl flex items-center justify-center transition-colors hover:bg-red-800/60">
                                                     <SVGIcon name="trash" size={16} color="#ef4444" />
                                                 </button>
                                             </div>
@@ -323,44 +449,128 @@
                         )}
                     </main>
 
-                    {showForm && (
-                        <div className="fixed inset-0 bg-black/90 z-[100] p-6 flex items-center">
-                            <form onSubmit={handleSaveTask} className="bg-slate-900 w-full rounded-[2.5rem] p-8 space-y-4 border border-white/10">
-                                <h2 className="font-black uppercase text-blue-400 mb-4">Nuevo Trabajo</h2>
-                                <input placeholder="Nombre Cliente" className="w-full p-4 rounded-xl" value={formData.clientName} onChange={e=>setFormData({...formData, clientName:e.target.value})} />
-                                <div className="flex gap-2">
-                                    <input placeholder="Teléfono" className="flex-1 p-4 rounded-xl" value={formData.phone} onChange={e=>setFormData({...formData, phone:e.target.value})} />
-                                    <div className="p-4 bg-white/5 rounded-xl flex items-center justify-center opacity-40">
-                                        <SVGIcon name="whatsapp" color="#22c55e" size={20} />
+                    {/* Menú para Entrega a Cuenta */}
+                    {editCobrado && (
+                        <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
+                            <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
+                                <h3 className="text-xs font-black text-blue-400 uppercase mb-4">Gestión de Cobro</h3>
+                                <div className="grid grid-cols-2 gap-2 mb-6">
+                                    <div className="bg-black/20 p-3 rounded-xl">
+                                        <p className="text-[8px] text-white/40 uppercase">PVP Total</p>
+                                        <p className="text-lg font-black text-white">{editCobrado.totalPVP}€</p>
+                                    </div>
+                                    <div className="bg-black/20 p-3 rounded-xl">
+                                        <p className="text-[8px] text-white/40 uppercase">Ya Cobrado</p>
+                                        <p className="text-lg font-black text-green-500">{editCobrado.currentPaid}€</p>
                                     </div>
                                 </div>
-                                <input placeholder="¿Qué hay que hacer?" className="w-full p-4 rounded-xl" value={formData.jobType} onChange={e=>setFormData({...formData, jobType:e.target.value})} />
-                                <textarea placeholder="Materiales (separados por comas)" className="w-full p-4 rounded-xl h-24" value={formData.materials} onChange={e=>setFormData({...formData, materials:e.target.value})} />
-                                <div className="flex gap-4">
-                                    <input placeholder="PVP" className="flex-1 p-4 rounded-xl text-center" value={formData.totalAmount} onChange={e=>setFormData({...formData, totalAmount:e.target.value})} />
-                                    <input placeholder="Cobrado" className="flex-1 p-4 rounded-xl text-center" value={formData.paidAmount} onChange={e=>setFormData({...formData, paidAmount:e.target.value})} />
+                                <div className="space-y-2 mb-6 text-left">
+                                    <p className="text-[9px] uppercase text-slate-500 font-bold ml-2">Añadir Entrega a Cuenta</p>
+                                    <input 
+                                        type="number" 
+                                        autoFocus
+                                        placeholder="0.00"
+                                        onFocus={(e) => e.target.select()}
+                                        className="w-full text-3xl font-black text-center p-4 rounded-xl bg-black/40" 
+                                        id="entregaInput"
+                                    />
                                 </div>
                                 <div className="flex gap-2">
-                                    <button type="button" onClick={()=>setShowForm(false)} className="flex-1 bg-slate-800 p-4 rounded-xl font-bold">Cancelar</button>
-                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black">GUARDAR</button>
+                                    <button onClick={() => setEditCobrado(null)} className="flex-1 py-3 text-white/40 font-bold">Cerrar</button>
+                                    <button 
+                                        onClick={() => {
+                                            const entrega = parseFloat(document.getElementById('entregaInput').value) || 0;
+                                            const nuevoTotal = (parseFloat(editCobrado.currentPaid) || 0) + entrega;
+                                            setTasks(tasks.map(t => t.id === editCobrado.id ? {...t, paidAmount: nuevoTotal.toString()} : t));
+                                            setEditCobrado(null);
+                                            showAlert(`✅ +${entrega}€ AÑADIDOS`);
+                                        }} 
+                                        className="flex-1 bg-green-600 py-3 rounded-xl font-black uppercase text-xs"
+                                    >Sumar Cobro</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {editMoney && (
+                        <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
+                            <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
+                                <input 
+                                    type="number" 
+                                    autoFocus
+                                    onFocus={(e) => e.target.select()}
+                                    className="w-full text-4xl font-black text-center p-4 rounded-xl mb-4 bg-black/40" 
+                                    value={editMoney.value}
+                                    onChange={(e) => setEditMoney({...editMoney, value: e.target.value})}
+                                />
+                                <div className="flex gap-2">
+                                    <button onClick={() => setEditMoney(null)} className="flex-1 py-3 text-white/40 font-bold">Cerrar</button>
+                                    <button 
+                                        onClick={() => {
+                                            setTasks(tasks.map(t => t.id === editMoney.id ? {...t, [editMoney.type]: editMoney.value} : t));
+                                            setEditMoney(null);
+                                        }} 
+                                        className="flex-1 bg-blue-600 py-3 rounded-xl font-black uppercase text-xs"
+                                    >Ok</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showForm && (
+                        <div className="fixed inset-0 bg-black/90 z-[200] p-6 flex items-center justify-center backdrop-blur-md">
+                            <form onSubmit={handleSaveTask} className="bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 space-y-4 border border-white/10 shadow-2xl">
+                                <h2 className="font-black uppercase text-blue-400 mb-2">{editingId ? 'Editar Cliente' : 'Nuevo Trabajo'}</h2>
+                                <input placeholder="Nombre Cliente" className="w-full p-4 rounded-xl" value={formData.clientName} onChange={e=>handleInputChange('clientName', e.target.value)} required />
+                                <input type="tel" placeholder="Teléfono" className="w-full p-4 rounded-xl" value={formData.phone} onChange={e=>handleInputChange('phone', e.target.value)} />
+                                <input placeholder="¿Qué hay que hacer?" className="w-full p-4 rounded-xl" value={formData.jobType} onChange={e=>handleInputChange('jobType', e.target.value)} />
+                                <textarea placeholder="Materiales..." className="w-full p-4 rounded-xl h-20" value={formData.materials} onChange={e=>handleInputChange('materials', e.target.value)} />
+                                <div className="flex gap-4">
+                                    <div className="flex-1">
+                                        <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Total PVP</p>
+                                        <input 
+                                            placeholder="PVP" 
+                                            className="w-full p-4 rounded-xl text-center" 
+                                            value={formData.totalAmount} 
+                                            onFocus={(e) => e.target.select()}
+                                            onChange={e=>setFormData({...formData, totalAmount:e.target.value})} 
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Cobrado</p>
+                                        <input 
+                                            placeholder="Cobrado" 
+                                            className="w-full p-4 rounded-xl text-center" 
+                                            value={formData.paidAmount} 
+                                            onFocus={(e) => e.target.select()}
+                                            onChange={e=>setFormData({...formData, paidAmount:e.target.value})} 
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 mt-4">
+                                    <button type="button" onClick={()=>{setShowForm(false); setEditingId(null);}} className="flex-1 bg-slate-800 p-4 rounded-xl font-bold uppercase text-xs">Cancelar</button>
+                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black uppercase text-xs">
+                                        {editingId ? 'ACTUALIZAR' : 'GUARDAR'}
+                                    </button>
                                 </div>
                             </form>
                         </div>
                     )}
 
                     {showExpenseForm && (
-                        <div className="fixed inset-0 bg-black/90 z-[120] p-6 flex items-center">
-                            <div className="bg-slate-900 w-full rounded-[2.5rem] p-8 space-y-4 border border-white/10 text-center">
+                        <div className="fixed inset-0 bg-black/90 z-[200] p-6 flex items-center justify-center backdrop-blur-md">
+                            <div className="bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 space-y-4 border border-white/10 text-center shadow-2xl">
                                 <h3 className="font-black text-red-500 uppercase">Anotar Gasto</h3>
-                                <input placeholder="Concepto" className="w-full p-4 rounded-xl" value={expenseData.concept} onChange={e=>setExpenseData({...expenseData, concept:e.target.value})} />
-                                <input placeholder="Importe €" className="w-full p-4 rounded-xl text-center text-2xl font-black" value={expenseData.amount} onChange={e=>setExpenseData({...expenseData, amount:e.target.value})} />
+                                <input placeholder="Concepto" className="w-full p-4 rounded-xl" value={expenseData.concept} onChange={e=>setExpenseData({...expenseData, concept:e.target.value.toUpperCase()})} />
+                                <input placeholder="Importe €" className="w-full p-4 rounded-xl text-center text-2xl font-black" value={expenseData.amount} onFocus={(e) => e.target.select()} onChange={e=>setExpenseData({...expenseData, amount:e.target.value})} />
                                 <button onClick={()=>{
                                     if(!expenseData.amount) return;
                                     setExpenses([{...expenseData, id:Date.now(), amount: parseFloat(expenseData.amount)}, ...expenses]);
                                     setShowExpenseForm(false);
                                     setExpenseData({concept:'', amount:''});
-                                }} className="w-full bg-red-600 p-4 rounded-xl font-black">REGISTRAR GASTO</button>
-                                <button onClick={()=>setShowExpenseForm(false)} className="text-white/40 text-xs font-bold uppercase">Cerrar</button>
+                                    showAlert("✅ GASTO REGISTRADO");
+                                }} className="w-full bg-red-600 p-4 rounded-xl font-black uppercase text-xs">REGISTRAR GASTO</button>
+                                <button onClick={()=>setShowExpenseForm(false)} className="text-white/40 text-[10px] font-black uppercase p-2">Cerrar</button>
                             </div>
                         </div>
                     )}
