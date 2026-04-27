@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gestor PRO - Oficial</title>
+    <title>FONTANERIA JUMIAN - Oficial</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -137,7 +137,7 @@
             const [showExpenseForm, setShowExpenseForm] = useState(false);
             const [alertMsg, setAlertMsg] = useState(null);
             const [editMoney, setEditMoney] = useState(null); 
-            const [editCobrado, setEditCobrado] = useState(null); // Nuevo estado para menú de cobro
+            const [editCobrado, setEditCobrado] = useState(null);
             const [restoreCode, setRestoreCode] = useState('');
             
             const [formData, setFormData] = useState({
@@ -235,6 +235,27 @@
                 window.open(`https://wa.me/?text=${msg}`, '_blank');
             };
 
+            // NUEVA FUNCIÓN: Enviar lista de espera detallada
+            const sendPendingListWhatsApp = () => {
+                const pendingTasks = tasks.filter(t => t.status === 'pending');
+                if (pendingTasks.length === 0) {
+                    showAlert("⚠️ NO HAY TRABAJOS EN ESPERA");
+                    return;
+                }
+
+                let text = `🛠️ *PENDIENTES - FONTANERIA JUMIAN* 🛠️\n\n`;
+                pendingTasks.forEach((t, i) => {
+                    text += `*${i+1}. ${t.clientName}*\n`;
+                    if (t.phone) text += `📞 ${t.phone}\n`;
+                    if (t.jobType) text += `📝 ${t.jobType}\n`;
+                    if (t.materials) text += `📦 NOTAS: ${t.materials.replace(/\n/g, ', ')}\n`;
+                    text += `──────────────────\n`;
+                });
+
+                const msg = encodeURIComponent(text);
+                window.open(`https://wa.me/?text=${msg}`, '_blank');
+            };
+
             const handleRestore = () => {
                 try {
                     const parsed = JSON.parse(restoreCode);
@@ -254,7 +275,6 @@
                     const diff = (parseFloat(t.totalAmount) || 0) - (parseFloat(t.paidAmount) || 0);
                     return acc + (diff > 0 ? diff : 0);
                 }, 0);
-                // Ganancia potencial = Todos los PVP - Gastos
                 const potentialIn = tasks.reduce((acc, t) => acc + (parseFloat(t.totalAmount) || 0), 0);
                 return { in: inVal, out: outVal, bal: inVal - outVal, pending: pendingVal, potential: potentialIn - outVal };
             }, [tasks, expenses]);
@@ -270,7 +290,10 @@
                     <header className="bg-slate-900/80 backdrop-blur-md p-6 sticky top-0 z-50 flex justify-between items-center border-b border-white/5">
                         <div className="flex items-center gap-3">
                             <SVGIcon name="hammer" color="#3b82f6" size={28} />
-                            <h1 className="font-black text-xl italic uppercase text-white">GESTOR PRO</h1>
+                            <h1 className="font-black text-xl italic uppercase text-white tracking-tighter">FONTANERIA JUMIAN</h1>
+                            <button onClick={sendPendingListWhatsApp} className="btn-press ml-1 bg-green-600/20 p-2 rounded-full border border-green-500/30">
+                                <SVGIcon name="whatsapp" color="#22c55e" size={22} />
+                            </button>
                         </div>
                         <div className="flex gap-4">
                             <button onClick={() => setShowExpenseForm(true)} className="btn-press">
@@ -301,10 +324,10 @@
                         {view === 'backups' ? (
                             <div className="space-y-6">
                                 <div className="copy-section-card space-y-4">
-                                    <h3 className="text-sm font-black uppercase text-white">COMPARTIR LISTADO</h3>
+                                    <h3 className="text-sm font-black uppercase text-white">COMPARTIR LISTADO COMPLETO</h3>
                                     <button onClick={sendWhatsAppBackup} className="w-full bg-[#2e7d32] hover:bg-green-700 p-5 rounded-2xl flex items-center justify-center gap-3 transition-colors btn-press">
                                         <SVGIcon name="messageSquare" size={22} color="white" />
-                                        <span className="font-black text-[12px] text-white">ENVIAR LISTADO + NOTAS (WhatsApp)</span>
+                                        <span className="font-black text-[12px] text-white">ENVIAR TODO (JSON WhatsApp)</span>
                                     </button>
                                     
                                     <div className="grid grid-cols-2 gap-3">
@@ -449,7 +472,6 @@
                         )}
                     </main>
 
-                    {/* Menú para Entrega a Cuenta */}
                     {editCobrado && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
@@ -524,7 +546,7 @@
                                 <input placeholder="Nombre Cliente" className="w-full p-4 rounded-xl" value={formData.clientName} onChange={e=>handleInputChange('clientName', e.target.value)} required />
                                 <input type="tel" placeholder="Teléfono" className="w-full p-4 rounded-xl" value={formData.phone} onChange={e=>handleInputChange('phone', e.target.value)} />
                                 <input placeholder="¿Qué hay que hacer?" className="w-full p-4 rounded-xl" value={formData.jobType} onChange={e=>handleInputChange('jobType', e.target.value)} />
-                                <textarea placeholder="Materiales..." className="w-full p-4 rounded-xl h-20" value={formData.materials} onChange={e=>handleInputChange('materials', e.target.value)} />
+                                <textarea placeholder="Materiales / Notas..." className="w-full p-4 rounded-xl h-20" value={formData.materials} onChange={e=>handleInputChange('materials', e.target.value)} />
                                 <div className="flex gap-4">
                                     <div className="flex-1">
                                         <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Total PVP</p>
