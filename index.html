@@ -233,7 +233,8 @@
             const sendWhatsAppBackup = () => {
                 const data = JSON.stringify({tasks, expenses});
                 const msg = encodeURIComponent("MI BACKUP GESTOR PRO:\n\n" + data);
-                window.open(`https://wa.me/?text=${msg}`, '_blank');
+                // Usamos el API de WhatsApp directo para forzar apertura de app
+                window.location.href = `https://wa.me/?text=${msg}`;
             };
 
             const sendPendingListWhatsApp = () => {
@@ -268,7 +269,8 @@
                 text += `⚡ _Generado por Gestor Pro_`;
 
                 const msg = encodeURIComponent(text);
-                window.open(`https://wa.me/?text=${msg}`, '_blank');
+                // Usamos el API de WhatsApp directo para forzar apertura de app
+                window.location.href = `https://wa.me/?text=${msg}`;
             };
 
             const handleRestore = () => {
@@ -507,9 +509,11 @@
                                                     {task.phone && (
                                                         <button onClick={() => {
                                                             const cleanPhone = task.phone.replace(/\D/g, '');
-                                                            const prefix = cleanPhone.startsWith('34') ? '' : '34';
+                                                            // Forzamos el prefijo 34 si tiene 9 dígitos (formato España)
+                                                            const formattedPhone = cleanPhone.length === 9 ? `34${cleanPhone}` : cleanPhone;
                                                             const customMsg = encodeURIComponent("Buenas, ¿estás en casa para acercarnos en un rato a ver el trabajo? Gracias");
-                                                            window.open(`https://wa.me/${prefix}${cleanPhone}?text=${customMsg}`, '_blank');
+                                                            // Usamos window.location.href para asegurar disparo de app
+                                                            window.location.href = `https://wa.me/${formattedPhone}?text=${customMsg}`;
                                                         }} className="btn-press p-1">
                                                             <SVGIcon name="whatsapp" color="#22c55e" size={28} />
                                                         </button>
