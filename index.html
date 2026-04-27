@@ -91,6 +91,36 @@
             gap: 10px;
             cursor: pointer;
         }
+
+        /* Estilos específicos para el botón del Header */
+        .wa-header-btn {
+            position: relative;
+            background-color: #25d366;
+            padding: 10px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            border: none;
+        }
+        
+        .wa-header-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ef4444;
+            color: white;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            border: 2px solid #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 900;
+        }
     </style>
 </head>
 <body>
@@ -111,7 +141,7 @@
                 save: <g><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></g>,
                 trash: <g><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></g>,
                 package: <g><path d="M16.5 9.4 7.5 4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/></g>,
-                whatsapp: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-103 8.38 8.38 0 0 1 3.8.9L21 4.5ZM17 13c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.5.1-.2.3-.6.8-.7.9-.1.2-.2.2-.4.1s-.9-.3-1.7-1c-.6-.5-1-1.1-1.2-1.3-.2-.2-.03-.4.1-.5l.3-.4.2-.3c.1-.2 0-.3-.1-.4-.1-.1-.5-1.2-.7-1.6-.1-.4-.3-.3-.5-.3h-.4c-.2 0-.5.1-.8.4-.3.3-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.4 3.9 3.4.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.2-.3-.3-.6-.4Z"/>,
+                whatsapp: <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .015 5.398.012 12.037c0 2.12.553 4.189 1.604 6.04L0 24l6.117-1.605a11.837 11.837 0 005.928 1.573h.006c6.635 0 12.032-5.398 12.035-12.041a11.85 11.85 0 00-3.483-8.511z"/>,
                 undo: <g><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></g>,
                 download: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></g>,
                 shield: <g><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g>,
@@ -123,7 +153,7 @@
             };
 
             return (
-                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width={size} height={size} viewBox="0 0 24 24" fill={name === "whatsapp" ? "currentColor" : "none"} stroke={name === "whatsapp" ? "none" : color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     {icons[name] || null}
                 </svg>
             );
@@ -179,7 +209,6 @@
             };
 
             const openWhatsApp = (url) => {
-                // Función auxiliar para intentar abrir WhatsApp forzadamente
                 const win = window.open(url, '_blank');
                 if (win) win.focus();
                 else window.location.assign(url);
@@ -257,6 +286,7 @@
                 pendingTasks.forEach((t, i) => {
                     text += `📌 *${i+1}. ${t.clientName}*\n`;
                     if (t.phone) text += `📞 ${t.phone}\n`;
+                    if (t.address) text += `🏠 ${t.address}\n`;
                     if (t.jobType) text += `🛠️ ${t.jobType}\n`;
                     
                     if (t.materials) {
@@ -324,6 +354,8 @@
                 }
             };
 
+            const pendingCount = tasks.filter(t => t.status === 'pending').length;
+
             return (
                 <div className="min-h-screen flex flex-col pb-20 max-w-md mx-auto relative">
                     {alertMsg && (
@@ -335,9 +367,13 @@
                     <header className="bg-slate-900/80 backdrop-blur-md p-6 sticky top-0 z-50 flex justify-between items-center border-b border-white/5">
                         <div className="flex items-center gap-3">
                             <SVGIcon name="hammer" color="#3b82f6" size={28} />
-                            <h1 className="font-black text-xl italic uppercase text-white tracking-tighter">FONTANERIA JUMIANJE</h1>
-                            <button onClick={sendPendingListWhatsApp} className="btn-press ml-1 bg-green-600/20 p-2 rounded-full border border-green-500/30">
-                                <SVGIcon name="whatsapp" color="#22c55e" size={22} />
+                            <div className="flex flex-col">
+                                <h1 className="font-black text-xl italic uppercase text-white tracking-tighter leading-none">FONTANERIA</h1>
+                                <h1 className="font-black text-xl italic uppercase text-blue-400 tracking-tighter leading-none">JUMIANJE</h1>
+                            </div>
+                            <button onClick={sendPendingListWhatsApp} className="wa-header-btn btn-press ml-2">
+                                <SVGIcon name="whatsapp" color="white" size={22} />
+                                {pendingCount > 0 && <div className="wa-header-badge">{pendingCount}</div>}
                             </button>
                         </div>
                         <div className="flex gap-4">
@@ -510,12 +546,9 @@
                                                     {task.phone && (
                                                         <button onClick={() => {
                                                             const cleanPhone = task.phone.replace(/\D/g, '');
-                                                            // Asegurar prefijo 34 para España si faltan los dígitos iniciales
                                                             const fullPhone = cleanPhone.length === 9 ? `34${cleanPhone}` : cleanPhone;
                                                             const msgText = "Hola, ¿estás en casa para pasar a ver lo de fontanería? Gracias.";
                                                             const encodedMsg = encodeURIComponent(msgText);
-                                                            
-                                                            // Usamos el protocolo directo para móviles y fallback api
                                                             const waUrl = `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodedMsg}`;
                                                             openWhatsApp(waUrl);
                                                         }} className="btn-press p-1">
