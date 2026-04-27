@@ -207,15 +207,9 @@
                 setFormData({ ...formData, [field]: value.toUpperCase() });
             };
 
-            // REPARACIÓN WHATSAPP: USO DE API OFICIAL Y TARGET TOP PARA SALIR DE IFRAMES
+            // SOLUCIÓN PARA WHATSAPP: Abrir en la capa superior (_top) para evitar bloqueos en el visor
             const openWhatsApp = (url) => {
-                const link = document.createElement('a');
-                link.href = url;
-                link.target = '_top'; // Crucial para saltar el contenedor de previsualización
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                window.open(url, '_top');
             };
 
             const handleSaveTask = (e) => {
@@ -551,7 +545,7 @@
                                                         <button onClick={() => {
                                                             const cleanPhone = task.phone.replace(/\D/g, '');
                                                             const fullPhone = cleanPhone.length === 9 ? `34${cleanPhone}` : cleanPhone;
-                                                            const msgText = "Hola, ¿estás en casa para pasar a ver lo de fontanería? Gracias.";
+                                                            const msgText = `Hola, soy de Fontanería JUMIANJE. ¿Estarás en casa para lo de ${task.jobType || 'tu avería'}? Gracias.`;
                                                             openWhatsApp(`https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(msgText)}`);
                                                         }} className="btn-press p-1">
                                                             <SVGIcon name="whatsapp" color="#22c55e" size={28} />
@@ -593,7 +587,7 @@
                         )}
                     </main>
 
-                    {/* MODALES DE EDICIÓN Y GASTOS - Mantenidos igual pero con retoques de interactividad */}
+                    {/* MODALES DE EDICIÓN */}
                     {editCobrado && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
