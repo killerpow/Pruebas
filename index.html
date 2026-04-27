@@ -118,7 +118,8 @@
                 upload: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></g>,
                 file: <g><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></g>,
                 messageSquare: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>,
-                edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></g>
+                edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></g>,
+                users: <g><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></g>
             };
 
             return (
@@ -235,7 +236,6 @@
                 window.open(`https://wa.me/?text=${msg}`, '_blank');
             };
 
-            // NUEVA FUNCIÓN: Enviar lista de espera detallada
             const sendPendingListWhatsApp = () => {
                 const pendingTasks = tasks.filter(t => t.status === 'pending');
                 if (pendingTasks.length === 0) {
@@ -270,14 +270,46 @@
 
             const totals = useMemo(() => {
                 const inVal = tasks.reduce((acc, t) => acc + (parseFloat(t.paidAmount) || 0), 0);
-                const outVal = expenses.reduce((acc, e) => acc + (parseFloat(e.amount) || 0), 0);
+                const paidExpensesVal = expenses.reduce((acc, e) => acc + (e.isPaid ? (parseFloat(e.amount) || 0) : 0), 0);
+                const pendingExpensesVal = expenses.reduce((acc, e) => acc + (!e.isPaid ? (parseFloat(e.amount) || 0) : 0), 0);
+                
                 const pendingVal = tasks.reduce((acc, t) => {
                     const diff = (parseFloat(t.totalAmount) || 0) - (parseFloat(t.paidAmount) || 0);
                     return acc + (diff > 0 ? diff : 0);
                 }, 0);
+                
                 const potentialIn = tasks.reduce((acc, t) => acc + (parseFloat(t.totalAmount) || 0), 0);
-                return { in: inVal, out: outVal, bal: inVal - outVal, pending: pendingVal, potential: potentialIn - outVal };
+                const totalOutReal = expenses.reduce((acc, e) => acc + (parseFloat(e.amount) || 0), 0);
+
+                return { 
+                    in: inVal, 
+                    out: paidExpensesVal, 
+                    bal: inVal - paidExpensesVal, 
+                    pending: pendingVal, 
+                    potential: potentialIn - totalOutReal,
+                    pendingExpenses: pendingExpensesVal
+                };
             }, [tasks, expenses]);
+
+            const handlePayExpense = (id) => {
+                setExpenses(expenses.map(e => e.id === id ? { ...e, isPaid: true } : e));
+                showAlert("✅ GASTO LIQUIDADO");
+            };
+
+            // Función para repartir y liquidar todo
+            const handleRepartirYLiquidar = () => {
+                const confirmacion = confirm(`⚠️ ¿ESTÁS SEGURO DE LIQUIDAR TODO?\n\nSe pondrán a cero los cobros y gastos registrados.\n\nReparto actual: ${(totals.bal / 2).toFixed(2)}€ para cada uno.`);
+                
+                if (confirmacion) {
+                    // Ponemos a cero el cobrado de todos los trabajos
+                    setTasks(tasks.map(t => ({ ...t, paidAmount: '0', totalAmount: t.status === 'archived' ? '0' : t.totalAmount })));
+                    // Eliminamos los gastos ya pagados y dejamos los pendientes si se quiere, o borramos todo.
+                    // Para una liquidación total real, borramos todos los gastos.
+                    setExpenses([]);
+                    
+                    showAlert("✅ BALANCE LIQUIDADO A CERO");
+                }
+            };
 
             return (
                 <div className="min-h-screen flex flex-col pb-20 max-w-md mx-auto relative">
@@ -344,7 +376,6 @@
 
                                 <div className="copy-section-card space-y-6">
                                     <h3 className="text-lg font-black uppercase text-white">RESTAURAR</h3>
-                                    
                                     <div className="dotted-upload" onClick={() => document.getElementById('fileInput').click()}>
                                         <SVGIcon name="file" size={32} color="#3b82f6" />
                                         <span className="text-[10px] font-black uppercase text-slate-400">ELEGIR ARCHIVO</span>
@@ -357,19 +388,11 @@
                                             }
                                         }} />
                                     </div>
-
                                     <div className="space-y-4">
                                         <div className="bg-[#121212] rounded-3xl p-4 border border-white/5">
-                                            <textarea 
-                                                className="w-full h-32 bg-transparent border-none text-xs text-slate-400 no-scrollbar"
-                                                placeholder="Pegar código de WhatsApp aquí..."
-                                                value={restoreCode}
-                                                onChange={(e) => setRestoreCode(e.target.value)}
-                                            />
+                                            <textarea className="w-full h-32 bg-transparent border-none text-xs text-slate-400 no-scrollbar" placeholder="Pegar código de WhatsApp aquí..." value={restoreCode} onChange={(e) => setRestoreCode(e.target.value)} />
                                         </div>
-                                        <button onClick={handleRestore} className="w-full bg-blue-700 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-wider btn-press">
-                                            RESTAURAR AHORA
-                                        </button>
+                                        <button onClick={handleRestore} className="w-full bg-blue-700 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-wider btn-press">RESTAURAR AHORA</button>
                                     </div>
                                 </div>
                             </div>
@@ -377,25 +400,79 @@
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-white/5 p-4 rounded-2xl text-center">
-                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Cobrado</p>
+                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Total Cobrado</p>
                                         <h2 className="text-xl font-black text-green-500">{totals.in.toFixed(2)}€</h2>
                                     </div>
                                     <div className="bg-white/5 p-4 rounded-2xl text-center">
-                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Gastos</p>
+                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Gastos Pagados</p>
                                         <h2 className="text-xl font-black text-red-500">{totals.out.toFixed(2)}€</h2>
                                     </div>
                                 </div>
-                                <div className="bg-white/5 p-4 rounded-2xl text-center">
-                                    <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pendiente de Cobro</p>
-                                    <h2 className="text-xl font-black text-blue-400">{totals.pending.toFixed(2)}€</h2>
-                                </div>
+                                
                                 <div className="bg-purple-600/20 p-6 rounded-[2rem] border border-purple-500/30 text-center shadow-xl">
-                                    <p className="text-[10px] font-black text-purple-400 uppercase mb-1">Beneficio Neto</p>
+                                    <p className="text-[10px] font-black text-purple-400 uppercase mb-1">Beneficio Neto Real</p>
                                     <h2 className="text-3xl font-black text-white">{totals.bal.toFixed(2)}€</h2>
                                 </div>
-                                <div className="bg-emerald-600/20 p-6 rounded-[2rem] border border-emerald-500/30 text-center shadow-xl">
-                                    <p className="text-[10px] font-black text-emerald-400 uppercase mb-1">Ganancia Potencial</p>
-                                    <h2 className="text-3xl font-black text-white">{totals.potential.toFixed(2)}€</h2>
+
+                                {/* BOTÓN DE REPARTO Y LIQUIDACIÓN */}
+                                <button 
+                                    onClick={handleRepartirYLiquidar}
+                                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-[2rem] shadow-xl border border-white/10 btn-press mt-2 mb-4"
+                                >
+                                    <div className="flex flex-col items-center gap-1">
+                                        <div className="flex items-center gap-2">
+                                            <SVGIcon name="users" size={24} color="white" />
+                                            <span className="font-black text-xs uppercase text-white tracking-widest">Repartir y Liquidar</span>
+                                        </div>
+                                        <div className="mt-1 bg-black/30 px-4 py-1 rounded-full">
+                                            <span className="text-[14px] font-black text-white">
+                                                {totals.bal.toFixed(2)}€ / 2 = <span className="text-green-400">{(totals.bal / 2).toFixed(2)}€</span>
+                                            </span>
+                                        </div>
+                                        <span className="text-[8px] text-indigo-200 uppercase font-bold mt-2 opacity-60">Pulsa para poner todo a cero</span>
+                                    </div>
+                                </button>
+
+                                <div className="grid grid-cols-2 gap-3 opacity-60">
+                                    <div className="bg-white/5 p-4 rounded-2xl text-center border border-dashed border-blue-500/20">
+                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pte. Cobro</p>
+                                        <h2 className="text-sm font-black text-blue-400">{totals.pending.toFixed(2)}€</h2>
+                                    </div>
+                                    <div className="bg-white/5 p-4 rounded-2xl text-center border border-dashed border-red-500/20">
+                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pte. Pago (Gasto)</p>
+                                        <h2 className="text-sm font-black text-red-400">{totals.pendingExpenses.toFixed(2)}€</h2>
+                                    </div>
+                                </div>
+
+                                <div className="mt-6 space-y-3">
+                                    <div className="flex justify-between items-center px-2">
+                                        <h3 className="text-xs font-black uppercase text-slate-500">Desglose de Gastos</h3>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {expenses.length === 0 ? (
+                                            <p className="text-center py-6 text-[10px] text-slate-600 font-bold uppercase">Sin gastos en este periodo</p>
+                                        ) : expenses.map(exp => (
+                                            <div key={exp.id} className={`flex items-center justify-between p-4 rounded-2xl transition-all ${exp.isPaid ? 'bg-slate-800/30 opacity-40' : 'bg-red-500/10 border border-red-500/20'}`}>
+                                                <div className="flex-1">
+                                                    <p className="text-[10px] font-black text-white uppercase tracking-wider">{exp.concept}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="text-lg font-black text-red-400">{exp.amount.toFixed(2)}€</p>
+                                                        {exp.isPaid && <span className="bg-green-500/20 text-green-500 text-[8px] px-2 py-1 rounded font-black">PAGADO</span>}
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    {!exp.isPaid && (
+                                                        <button onClick={() => handlePayExpense(exp.id)} className="bg-green-600 p-3 rounded-xl btn-press">
+                                                            <SVGIcon name="check" size={18} color="white" />
+                                                        </button>
+                                                    )}
+                                                    <button onClick={() => { if(confirm("¿Eliminar?")) setExpenses(expenses.filter(e => e.id !== exp.id)); }} className="bg-slate-800 p-3 rounded-xl btn-press">
+                                                        <SVGIcon name="trash" size={18} color="#ef4444" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         ) : (
@@ -416,7 +493,6 @@
                                                     <button onClick={() => handleEditTask(task)} className="btn-press p-2 hover:bg-white/10 rounded-full transition-colors">
                                                         <SVGIcon name="edit" color="#60a5fa" size={22} />
                                                     </button>
-
                                                     {view !== 'pending' && (
                                                         <button onClick={() => setTasks(tasks.map(t => t.id === task.id ? { ...t, status: view === 'archived' ? 'completed' : 'pending' } : t))} className="btn-press p-1">
                                                             <SVGIcon name="undo" color="#94a3b8" size={24} />
@@ -433,7 +509,6 @@
                                                     )}
                                                 </div>
                                             </div>
-                                            
                                             {cleanMaterials(task.materials).length > 0 && (
                                                 <div className="materials-box">
                                                     {cleanMaterials(task.materials).map((m, i) => (
@@ -444,20 +519,16 @@
                                                     ))}
                                                 </div>
                                             )}
-
                                             <div className="flex gap-4 mt-4">
-                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" 
-                                                     onClick={() => setEditMoney({ id: task.id, type: 'totalAmount', value: task.totalAmount })}>
+                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" onClick={() => setEditMoney({ id: task.id, type: 'totalAmount', value: task.totalAmount })}>
                                                     <p className="text-[8px] uppercase text-white/30">PVP</p>
                                                     <p className="font-bold">{task.totalAmount}€</p>
                                                 </div>
-                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" 
-                                                     onClick={() => setEditCobrado({ id: task.id, currentPaid: task.paidAmount, totalPVP: task.totalAmount })}>
+                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" onClick={() => setEditCobrado({ id: task.id, currentPaid: task.paidAmount, totalPVP: task.totalAmount })}>
                                                     <p className="text-[8px] uppercase text-white/30">Cobrado</p>
                                                     <p className="font-bold text-green-400">{task.paidAmount}€</p>
                                                 </div>
                                             </div>
-
                                             <div className="mt-4 flex gap-2">
                                                 {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-green-700">Finalizar</button>}
                                                 {view === 'completed' && <button onClick={() => handleArchivar(task)} className="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-blue-700">Archivar</button>}
@@ -472,6 +543,7 @@
                         )}
                     </main>
 
+                    {/* MODALES MANTENIDOS */}
                     {editCobrado && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
@@ -488,27 +560,17 @@
                                 </div>
                                 <div className="space-y-2 mb-6 text-left">
                                     <p className="text-[9px] uppercase text-slate-500 font-bold ml-2">Añadir Entrega a Cuenta</p>
-                                    <input 
-                                        type="number" 
-                                        autoFocus
-                                        placeholder="0.00"
-                                        onFocus={(e) => e.target.select()}
-                                        className="w-full text-3xl font-black text-center p-4 rounded-xl bg-black/40" 
-                                        id="entregaInput"
-                                    />
+                                    <input type="number" autoFocus placeholder="0.00" onFocus={(e) => e.target.select()} className="w-full text-3xl font-black text-center p-4 rounded-xl bg-black/40" id="entregaInput" />
                                 </div>
                                 <div className="flex gap-2">
                                     <button onClick={() => setEditCobrado(null)} className="flex-1 py-3 text-white/40 font-bold">Cerrar</button>
-                                    <button 
-                                        onClick={() => {
+                                    <button onClick={() => {
                                             const entrega = parseFloat(document.getElementById('entregaInput').value) || 0;
                                             const nuevoTotal = (parseFloat(editCobrado.currentPaid) || 0) + entrega;
                                             setTasks(tasks.map(t => t.id === editCobrado.id ? {...t, paidAmount: nuevoTotal.toString()} : t));
                                             setEditCobrado(null);
                                             showAlert(`✅ +${entrega}€ AÑADIDOS`);
-                                        }} 
-                                        className="flex-1 bg-green-600 py-3 rounded-xl font-black uppercase text-xs"
-                                    >Sumar Cobro</button>
+                                        }} className="flex-1 bg-green-600 py-3 rounded-xl font-black uppercase text-xs">Sumar Cobro</button>
                                 </div>
                             </div>
                         </div>
@@ -517,23 +579,13 @@
                     {editMoney && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
-                                <input 
-                                    type="number" 
-                                    autoFocus
-                                    onFocus={(e) => e.target.select()}
-                                    className="w-full text-4xl font-black text-center p-4 rounded-xl mb-4 bg-black/40" 
-                                    value={editMoney.value}
-                                    onChange={(e) => setEditMoney({...editMoney, value: e.target.value})}
-                                />
+                                <input type="number" autoFocus onFocus={(e) => e.target.select()} className="w-full text-4xl font-black text-center p-4 rounded-xl mb-4 bg-black/40" value={editMoney.value} onChange={(e) => setEditMoney({...editMoney, value: e.target.value})} />
                                 <div className="flex gap-2">
                                     <button onClick={() => setEditMoney(null)} className="flex-1 py-3 text-white/40 font-bold">Cerrar</button>
-                                    <button 
-                                        onClick={() => {
+                                    <button onClick={() => {
                                             setTasks(tasks.map(t => t.id === editMoney.id ? {...t, [editMoney.type]: editMoney.value} : t));
                                             setEditMoney(null);
-                                        }} 
-                                        className="flex-1 bg-blue-600 py-3 rounded-xl font-black uppercase text-xs"
-                                    >Ok</button>
+                                        }} className="flex-1 bg-blue-600 py-3 rounded-xl font-black uppercase text-xs">Ok</button>
                                 </div>
                             </div>
                         </div>
@@ -550,30 +602,16 @@
                                 <div className="flex gap-4">
                                     <div className="flex-1">
                                         <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Total PVP</p>
-                                        <input 
-                                            placeholder="PVP" 
-                                            className="w-full p-4 rounded-xl text-center" 
-                                            value={formData.totalAmount} 
-                                            onFocus={(e) => e.target.select()}
-                                            onChange={e=>setFormData({...formData, totalAmount:e.target.value})} 
-                                        />
+                                        <input placeholder="PVP" className="w-full p-4 rounded-xl text-center" value={formData.totalAmount} onFocus={(e) => e.target.select()} onChange={e=>setFormData({...formData, totalAmount:e.target.value})} />
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Cobrado</p>
-                                        <input 
-                                            placeholder="Cobrado" 
-                                            className="w-full p-4 rounded-xl text-center" 
-                                            value={formData.paidAmount} 
-                                            onFocus={(e) => e.target.select()}
-                                            onChange={e=>setFormData({...formData, paidAmount:e.target.value})} 
-                                        />
+                                        <input placeholder="Cobrado" className="w-full p-4 rounded-xl text-center" value={formData.paidAmount} onFocus={(e) => e.target.select()} onChange={e=>setFormData({...formData, paidAmount:e.target.value})} />
                                     </div>
                                 </div>
                                 <div className="flex gap-2 mt-4">
                                     <button type="button" onClick={()=>{setShowForm(false); setEditingId(null);}} className="flex-1 bg-slate-800 p-4 rounded-xl font-bold uppercase text-xs">Cancelar</button>
-                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black uppercase text-xs">
-                                        {editingId ? 'ACTUALIZAR' : 'GUARDAR'}
-                                    </button>
+                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black uppercase text-xs">{editingId ? 'ACTUALIZAR' : 'GUARDAR'}</button>
                                 </div>
                             </form>
                         </div>
@@ -587,7 +625,7 @@
                                 <input placeholder="Importe €" className="w-full p-4 rounded-xl text-center text-2xl font-black" value={expenseData.amount} onFocus={(e) => e.target.select()} onChange={e=>setExpenseData({...expenseData, amount:e.target.value})} />
                                 <button onClick={()=>{
                                     if(!expenseData.amount) return;
-                                    setExpenses([{...expenseData, id:Date.now(), amount: parseFloat(expenseData.amount)}, ...expenses]);
+                                    setExpenses([{...expenseData, id:Date.now(), amount: parseFloat(expenseData.amount), isPaid: false}, ...expenses]);
                                     setShowExpenseForm(false);
                                     setExpenseData({concept:'', amount:''});
                                     showAlert("✅ GASTO REGISTRADO");
