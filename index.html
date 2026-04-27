@@ -1,0 +1,377 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gestor PRO - Oficial</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            transition: background-color 0.4s ease;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            color: #f8fafc;
+            background-color: #0f172a;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        input, textarea {
+            background-color: rgba(30, 41, 59, 0.7) !important;
+            color: white !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            outline: none;
+        }
+
+        .tab-active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+        }
+
+        .btn-press:active { transform: scale(0.96); opacity: 0.8; }
+        
+        .materials-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1.2rem;
+            padding: 0.8rem;
+            margin-top: 0.8rem;
+        }
+        
+        .material-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 11px;
+            color: #e2e8f0;
+        }
+
+        .card-pending { background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .card-completed { background: linear-gradient(145deg, #065f46 0%, #042f2e 100%); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .card-archived { background: linear-gradient(145deg, #475569 0%, #1e293b 100%); border: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .text-tab-pending { color: #60a5fa; }
+        .text-tab-completed { color: #4ade80; }
+        .text-tab-archived { color: #94a3b8; }
+        .text-tab-balance { color: #c084fc; }
+        .text-tab-backups { color: #fb923c; }
+
+        .client-name { font-weight: 900; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        const SVGIcon = ({ name, color = "currentColor", size = 24 }) => {
+            const icons = {
+                hammer: <path d="m15 5 4 4-11 11-4-4L15 5Z"/><path d="m21 2-5 5"/><path d="m17 2 5 5"/><path d="m7 12-5 5"/><path d="m2 17 5 5"/>,
+                banknote: <rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>,
+                userPlus: <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="16" x2="22" y1="11" y2="11"/>,
+                clock: <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>,
+                check: <polyline points="20 6 9 17 4 12"/>,
+                archive: <rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>,
+                chart: <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>,
+                save: <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>,
+                trash: <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>,
+                package: <path d="M16.5 9.4 7.5 4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>,
+                whatsapp: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-10.3 8.38 8.38 0 0 1 3.8.9L21 4.5ZM17 13c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.5.1-.2.3-.6.8-.7.9-.1.2-.2.2-.4.1s-.9-.3-1.7-1c-.6-.5-1-1.1-1.2-1.3-.2-.2-.03-.4.1-.5l.3-.4.2-.3c.1-.2 0-.3-.1-.4-.1-.1-.5-1.2-.7-1.6-.1-.4-.3-.3-.5-.3h-.4c-.2 0-.5.1-.8.4-.3.3-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.4 3.9 3.4.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.2-.3-.3-.6-.4Z"/>,
+                phone: <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            };
+
+            return (
+                <svg 
+                    width={size} 
+                    height={size} 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke={color} 
+                    strokeWidth="2.5" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                >
+                    {icons[name] || null}
+                </svg>
+            );
+        };
+
+        const App = () => {
+            const [tasks, setTasks] = useState([]);
+            const [expenses, setExpenses] = useState([]);
+            const [view, setView] = useState('pending');
+            const [showForm, setShowForm] = useState(false);
+            const [showExpenseForm, setShowExpenseForm] = useState(false);
+            const [editingTaskId, setEditingTaskId] = useState(null);
+            const [importText, setImportText] = useState('');
+            const [alertMsg, setAlertMsg] = useState(null);
+            
+            const [formData, setFormData] = useState({
+                clientName: '', phone: '', address: '', jobType: '', notes: '', materials: '', totalAmount: '', paidAmount: ''
+            });
+
+            const [expenseData, setExpenseData] = useState({ concept: '', amount: '' });
+
+            useEffect(() => {
+                const load = (key, def) => {
+                    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
+                };
+                setTasks(load('pro_tasks_v12', []));
+                setExpenses(load('pro_expenses_v12', []));
+            }, []);
+
+            useEffect(() => {
+                localStorage.setItem('pro_tasks_v12', JSON.stringify(tasks));
+                localStorage.setItem('pro_expenses_v12', JSON.stringify(expenses));
+            }, [tasks, expenses]);
+
+            const cleanMaterials = (text) => {
+                if (!text || typeof text !== 'string') return [];
+                return text.split(/[,\.\;\n]/).map(m => m.trim()).filter(m => m.length > 0);
+            };
+
+            const showAlert = (msg) => {
+                setAlertMsg(msg);
+                setTimeout(() => setAlertMsg(null), 4000);
+            };
+
+            const openWhatsApp = (phone) => {
+                if (!phone) return;
+                const cleanPhone = phone.replace(/\D/g, '');
+                const msg = encodeURIComponent("Buenas tardes. En un ratillo estaremos en casa si estáis esta tarde allí. Gracias");
+                window.open(`https://wa.me/${cleanPhone.startsWith('34') ? cleanPhone : '34' + cleanPhone}?text=${msg}`, '_blank');
+            };
+
+            const handleSaveTask = (e) => {
+                e.preventDefault();
+                const finalData = { ...formData, totalAmount: formData.totalAmount || '0', paidAmount: formData.paidAmount || '0' };
+                if (editingTaskId) {
+                    setTasks(tasks.map(t => t.id === editingTaskId ? { ...finalData, id: t.id, status: t.status } : t));
+                } else {
+                    setTasks([{ ...finalData, id: Date.now(), status: 'pending' }, ...tasks]);
+                }
+                setShowForm(false);
+                setEditingTaskId(null);
+            };
+
+            const handleResetBalance = () => {
+                const pendingDebt = tasks.reduce((acc, t) => {
+                    const diff = (parseFloat(t.totalAmount) || 0) - (parseFloat(t.paidAmount) || 0);
+                    return acc + (diff > 0 ? diff : 0);
+                }, 0);
+                if (pendingDebt > 0) {
+                    showAlert(`🚫 Faltan ${pendingDebt.toFixed(2)}€ por cobrar.`);
+                    return;
+                }
+                if (confirm("¿Poner gastos a cero?")) {
+                    setExpenses([]); 
+                    showAlert("✅ Gastos reiniciados");
+                }
+            };
+
+            const totals = useMemo(() => {
+                const in_ = tasks.reduce((acc, t) => acc + (parseFloat(t.paidAmount) || 0), 0);
+                const out_ = expenses.reduce((acc, e) => acc + (parseFloat(e.amount) || 0), 0);
+                const pending_ = tasks.reduce((acc, t) => {
+                    const diff = (parseFloat(t.totalAmount) || 0) - (parseFloat(t.paidAmount) || 0);
+                    return acc + (diff > 0 ? diff : 0);
+                }, 0);
+                return { in: in_, out: out_, bal: in_ - out_, pending: pending_ };
+            }, [tasks, expenses]);
+
+            return (
+                <div className="min-h-screen flex flex-col pb-20 max-w-md mx-auto">
+                    {alertMsg && (
+                        <div className="fixed top-4 left-4 right-4 z-[200] bg-red-600 text-white p-4 rounded-2xl font-black text-center shadow-2xl">
+                            {alertMsg}
+                        </div>
+                    )}
+
+                    <header className="bg-black/40 backdrop-blur-md p-6 sticky top-0 z-50 flex justify-between items-center border-b border-white/5">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-transparent flex items-center justify-center">
+                                <SVGIcon name="hammer" color="#3b82f6" size={28} />
+                            </div>
+                            <h1 className="font-black text-xl italic uppercase text-white">GESTOR PRO</h1>
+                        </div>
+                        <div className="flex gap-4">
+                            <button onClick={() => setShowExpenseForm(true)} className="bg-transparent flex items-center justify-center btn-press">
+                                <SVGIcon name="banknote" color="#ef4444" size={28} />
+                            </button>
+                            <button onClick={() => { setEditingTaskId(null); setFormData({ clientName: '', phone: '', address: '', jobType: '', notes: '', materials: '', totalAmount: '', paidAmount: '' }); setShowForm(true); }} className="bg-transparent flex items-center justify-center btn-press">
+                                <SVGIcon name="userPlus" color="#22c55e" size={28} />
+                            </button>
+                        </div>
+                    </header>
+
+                    <nav className="bg-black/20 border-b border-white/5 sticky top-[85px] z-40 p-2 flex gap-1">
+                        {[
+                            {id:'pending', icon:'clock', label:'Espera', class: 'text-tab-pending', hex: '#60a5fa'}, 
+                            {id:'completed', icon:'check', label:'Hechos', class: 'text-tab-completed', hex: '#4ade80'}, 
+                            {id:'archived', icon:'archive', label:'Archivo', class: 'text-tab-archived', hex: '#94a3b8'}, 
+                            {id:'balance', icon:'chart', label:'Balance', class: 'text-tab-balance', hex: '#c084fc'}, 
+                            {id:'backups', icon:'save', label:'Copias', class: 'text-tab-backups', hex: '#fb923c'}
+                        ].map(tab => (
+                            <button key={tab.id} onClick={() => setView(tab.id)} className={`flex-1 py-2 flex flex-col items-center gap-1 transition-all ${view === tab.id ? 'tab-active opacity-100' : 'opacity-40'}`}>
+                                <SVGIcon name={tab.icon} size={20} color={tab.hex} />
+                                <span className={`text-[10px] font-black uppercase ${tab.class}`}>{tab.label}</span>
+                            </button>
+                        ))}
+                    </nav>
+
+                    <main className="flex-1 p-4">
+                        {view === 'balance' ? (
+                            <div className="space-y-4 animate-in fade-in">
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-white/5 p-4 rounded-2xl text-center">
+                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Cobrado</p>
+                                        <h2 className="text-xl font-black text-green-500">{totals.in.toFixed(2)}€</h2>
+                                    </div>
+                                    <div className="bg-white/5 p-4 rounded-2xl text-center">
+                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Gastos</p>
+                                        <h2 className="text-xl font-black text-red-500">{totals.out.toFixed(2)}€</h2>
+                                    </div>
+                                </div>
+                                <div className="bg-white/5 p-4 rounded-2xl text-center">
+                                    <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pendiente</p>
+                                    <h2 className="text-xl font-black text-blue-400">{totals.pending.toFixed(2)}€</h2>
+                                </div>
+                                <div className="bg-purple-600/20 p-8 rounded-[2rem] border border-purple-500/30 text-center shadow-xl">
+                                    <p className="text-[11px] font-black text-purple-400 uppercase mb-2">Beneficio Neto</p>
+                                    <h2 className="text-5xl font-black text-white">{totals.bal.toFixed(2)}€</h2>
+                                </div>
+                                <button onClick={handleResetBalance} className="w-full bg-red-600/20 text-red-500 p-4 rounded-xl font-black uppercase text-[10px] btn-press">REPARTIR Y LIMPIAR GASTOS</button>
+                            </div>
+                        ) : view === 'backups' ? (
+                            <div className="space-y-4 animate-in fade-in">
+                                <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
+                                    <h3 className="text-xs font-black uppercase mb-4 text-center">Exportar Datos</h3>
+                                    <textarea className="w-full h-32 rounded-xl p-4 text-[10px]" readOnly value={JSON.stringify({tasks, expenses})} />
+                                </div>
+                                <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
+                                    <h3 className="text-xs font-black uppercase mb-4 text-center">Importar Copia</h3>
+                                    <textarea placeholder="Pegue aquí el código..." className="w-full h-24 rounded-xl p-4 text-[10px] mb-4" value={importText} onChange={e=>setImportText(e.target.value)} />
+                                    <button onClick={()=>{
+                                        try {
+                                            const p = JSON.parse(importText);
+                                            setTasks(p.tasks || []); setExpenses(p.expenses || []);
+                                            showAlert("✅ Datos restaurados"); setImportText('');
+                                        } catch { showAlert("❌ Código inválido"); }
+                                    }} className="w-full bg-orange-600 p-4 rounded-xl font-black btn-press">RESTAURAR COPIA</button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {tasks.filter(t => t.status === view).map(task => {
+                                    const materialsList = cleanMaterials(task.materials);
+                                    const cardClass = view === 'pending' ? 'card-pending' : view === 'completed' ? 'card-completed' : 'card-archived';
+                                    return (
+                                        <div key={task.id} className={`${cardClass} rounded-[2rem] p-6 shadow-xl relative`}>
+                                            <div className="flex justify-between items-start mb-1">
+                                                <div>
+                                                    <h4 className="client-name text-lg text-white">{task.clientName}</h4>
+                                                    <p className="text-xs text-white/40">{task.jobType}</p>
+                                                </div>
+                                                {task.phone && (
+                                                    <button onClick={() => openWhatsApp(task.phone)} className="btn-press">
+                                                        <SVGIcon name="whatsapp" color="#22c55e" size={24} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            
+                                            {materialsList.length > 0 && (
+                                                <div className="materials-box">
+                                                    {materialsList.map((m, i) => (
+                                                        <div key={i} className="material-row">
+                                                            <SVGIcon name="package" size={12} color="#60a5fa" />
+                                                            <span className="uppercase font-bold">{m}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            <div className="flex gap-4 mt-4">
+                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl">
+                                                    <p className="text-[8px] uppercase text-white/30">Total</p>
+                                                    <p className="font-bold">{task.totalAmount}€</p>
+                                                </div>
+                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl">
+                                                    <p className="text-[8px] uppercase text-white/30">Pagado</p>
+                                                    <p className="font-bold text-green-400">{task.paidAmount}€</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-4 flex gap-2">
+                                                {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase">Finalizar</button>}
+                                                {view === 'completed' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'archived'}:t))} className="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px] uppercase">Archivar</button>}
+                                                <button onClick={() => { if(confirm("¿Eliminar?")) setTasks(tasks.filter(t=>t.id!==task.id)); }} className="p-3 bg-red-900/40 text-red-500 rounded-xl flex items-center justify-center">
+                                                    <SVGIcon name="trash" size={16} color="#ef4444" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </main>
+
+                    {showForm && (
+                        <div className="fixed inset-0 bg-black/90 z-[100] p-6 flex items-center">
+                            <form onSubmit={handleSaveTask} className="bg-slate-900 w-full rounded-[2.5rem] p-8 space-y-4 border border-white/10">
+                                <h2 className="font-black uppercase text-blue-400 mb-4">Nuevo Trabajo</h2>
+                                <input placeholder="Nombre Cliente" className="w-full p-4 rounded-xl" value={formData.clientName} onChange={e=>setFormData({...formData, clientName:e.target.value})} />
+                                <div className="flex gap-2">
+                                    <input placeholder="Teléfono" className="flex-1 p-4 rounded-xl" value={formData.phone} onChange={e=>setFormData({...formData, phone:e.target.value})} />
+                                    <div className="p-4 bg-white/5 rounded-xl flex items-center justify-center opacity-40">
+                                        <SVGIcon name="whatsapp" color="#22c55e" size={20} />
+                                    </div>
+                                </div>
+                                <input placeholder="¿Qué hay que hacer?" className="w-full p-4 rounded-xl" value={formData.jobType} onChange={e=>setFormData({...formData, jobType:e.target.value})} />
+                                <textarea placeholder="Materiales (separados por comas)" className="w-full p-4 rounded-xl h-24" value={formData.materials} onChange={e=>setFormData({...formData, materials:e.target.value})} />
+                                <div className="flex gap-4">
+                                    <input placeholder="PVP" className="flex-1 p-4 rounded-xl text-center" value={formData.totalAmount} onChange={e=>setFormData({...formData, totalAmount:e.target.value})} />
+                                    <input placeholder="Cobrado" className="flex-1 p-4 rounded-xl text-center" value={formData.paidAmount} onChange={e=>setFormData({...formData, paidAmount:e.target.value})} />
+                                </div>
+                                <div className="flex gap-2">
+                                    <button type="button" onClick={()=>setShowForm(false)} className="flex-1 bg-slate-800 p-4 rounded-xl font-bold">Cancelar</button>
+                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black">GUARDAR</button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+
+                    {showExpenseForm && (
+                        <div className="fixed inset-0 bg-black/90 z-[120] p-6 flex items-center">
+                            <div className="bg-slate-900 w-full rounded-[2.5rem] p-8 space-y-4 border border-white/10 text-center">
+                                <h3 className="font-black text-red-500 uppercase">Anotar Gasto</h3>
+                                <input placeholder="Concepto" className="w-full p-4 rounded-xl" value={expenseData.concept} onChange={e=>setExpenseData({...expenseData, concept:e.target.value})} />
+                                <input placeholder="Importe €" className="w-full p-4 rounded-xl text-center text-2xl font-black" value={expenseData.amount} onChange={e=>setExpenseData({...expenseData, amount:e.target.value})} />
+                                <button onClick={()=>{
+                                    if(!expenseData.amount) return;
+                                    setExpenses([{...expenseData, id:Date.now(), amount: parseFloat(expenseData.amount)}, ...expenses]);
+                                    setShowExpenseForm(false);
+                                    setExpenseData({concept:'', amount:''});
+                                }} className="w-full bg-red-600 p-4 rounded-xl font-black">REGISTRAR GASTO</button>
+                                <button onClick={()=>setShowExpenseForm(false)} className="text-white/40 text-xs font-bold uppercase">Cerrar</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+
+```
