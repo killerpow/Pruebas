@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FONTANERIA JUMIANJE - Oficial</title>
+    <title>FONTANERIA JUMIAN - Oficial</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -91,36 +91,6 @@
             gap: 10px;
             cursor: pointer;
         }
-
-        /* Estilos específicos para el botón del Header */
-        .wa-header-btn {
-            position: relative;
-            background-color: #25d366;
-            padding: 10px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-            border: none;
-        }
-        
-        .wa-header-badge {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: #ef4444;
-            color: white;
-            min-width: 20px;
-            height: 20px;
-            border-radius: 10px;
-            border: 2px solid #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 900;
-        }
     </style>
 </head>
 <body>
@@ -141,19 +111,18 @@
                 save: <g><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></g>,
                 trash: <g><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></g>,
                 package: <g><path d="M16.5 9.4 7.5 4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/></g>,
-                whatsapp: <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .015 5.398.012 12.037c0 2.12.553 4.189 1.604 6.04L0 24l6.117-1.605a11.837 11.837 0 005.928 1.573h.006c6.635 0 12.032-5.398 12.035-12.041a11.85 11.85 0 00-3.483-8.511z"/>,
+                whatsapp: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-10.3 8.38 8.38 0 0 1 3.8.9L21 4.5ZM17 13c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.5.1-.2.3-.6.8-.7.9-.1.2-.2.2-.4.1s-.9-.3-1.7-1c-.6-.5-1-1.1-1.2-1.3-.2-.2-.03-.4.1-.5l.3-.4.2-.3c.1-.2 0-.3-.1-.4-.1-.1-.5-1.2-.7-1.6-.1-.4-.3-.3-.5-.3h-.4c-.2 0-.5.1-.8.4-.3.3-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.4 3.9 3.4.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.2-.3-.3-.6-.4Z"/>,
                 undo: <g><path d="M9 14 4 9l5-5"/><path d="M4 9h12a5 5 0 0 1 0 10H7"/></g>,
                 download: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></g>,
                 shield: <g><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g>,
                 upload: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></g>,
                 file: <g><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></g>,
                 messageSquare: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>,
-                edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></g>,
-                users: <g><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></g>
+                edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></g>
             };
 
             return (
-                <svg width={size} height={size} viewBox="0 0 24 24" fill={name === "whatsapp" ? "currentColor" : "none"} stroke={name === "whatsapp" ? "none" : color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     {icons[name] || null}
                 </svg>
             );
@@ -180,8 +149,8 @@
             useEffect(() => {
                 const loadData = () => {
                     try {
-                        const t = localStorage.getItem('pro_tasks_v13');
-                        const e = localStorage.getItem('pro_expenses_v13');
+                        const t = localStorage.getItem('pro_tasks_v12');
+                        const e = localStorage.getItem('pro_expenses_v12');
                         if(t) setTasks(JSON.parse(t));
                         if(e) setExpenses(JSON.parse(e));
                     } catch (err) { console.error(err); }
@@ -190,8 +159,8 @@
             }, []);
 
             useEffect(() => {
-                localStorage.setItem('pro_tasks_v13', JSON.stringify(tasks));
-                localStorage.setItem('pro_expenses_v13', JSON.stringify(expenses));
+                localStorage.setItem('pro_tasks_v12', JSON.stringify(tasks));
+                localStorage.setItem('pro_expenses_v12', JSON.stringify(expenses));
             }, [tasks, expenses]);
 
             const showAlert = (msg) => {
@@ -206,12 +175,6 @@
 
             const handleInputChange = (field, value) => {
                 setFormData({ ...formData, [field]: value.toUpperCase() });
-            };
-
-            const openWhatsApp = (url) => {
-                const win = window.open(url, '_blank');
-                if (win) win.focus();
-                else window.location.assign(url);
             };
 
             const handleSaveTask = (e) => {
@@ -262,16 +225,17 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `backup_jumianje_${new Date().toLocaleDateString()}.json`;
+                a.download = `backup_gestorpro_${new Date().toLocaleDateString()}.json`;
                 a.click();
             };
 
             const sendWhatsAppBackup = () => {
                 const data = JSON.stringify({tasks, expenses});
-                const msg = encodeURIComponent("BACKUP FONTANERIA JUMIANJE:\n\n" + data);
-                openWhatsApp(`https://wa.me/?text=${msg}`);
+                const msg = encodeURIComponent("MI BACKUP GESTOR PRO:\n\n" + data);
+                window.open(`https://wa.me/?text=${msg}`, '_blank');
             };
 
+            // NUEVA FUNCIÓN: Enviar lista de espera detallada
             const sendPendingListWhatsApp = () => {
                 const pendingTasks = tasks.filter(t => t.status === 'pending');
                 if (pendingTasks.length === 0) {
@@ -279,29 +243,17 @@
                     return;
                 }
 
-                let text = `🛠️ *FONTANERIA JUMIANJE* 🛠️\n`;
-                text += `━━━━━━━━━━━━━━\n`;
-                text += `📋 *TRABAJOS PENDIENTES*\n\n`;
-
+                let text = `🛠️ *PENDIENTES - FONTANERIA JUMIAN* 🛠️\n\n`;
                 pendingTasks.forEach((t, i) => {
-                    text += `📌 *${i+1}. ${t.clientName}*\n`;
+                    text += `*${i+1}. ${t.clientName}*\n`;
                     if (t.phone) text += `📞 ${t.phone}\n`;
-                    if (t.address) text += `🏠 ${t.address}\n`;
-                    if (t.jobType) text += `🛠️ ${t.jobType}\n`;
-                    
-                    if (t.materials) {
-                        const mList = cleanMaterials(t.materials);
-                        if (mList.length > 0) {
-                            text += `📦 *Materiales:*\n`;
-                            mList.forEach(m => { text += `   - ${m}\n`; });
-                        }
-                    }
-                    text += `──────────────────\n\n`;
+                    if (t.jobType) text += `📝 ${t.jobType}\n`;
+                    if (t.materials) text += `📦 NOTAS: ${t.materials.replace(/\n/g, ', ')}\n`;
+                    text += `──────────────────\n`;
                 });
 
-                text += `⚡ _Generado por Gestor JUMIANJE_`;
                 const msg = encodeURIComponent(text);
-                openWhatsApp(`https://wa.me/?text=${msg}`);
+                window.open(`https://wa.me/?text=${msg}`, '_blank');
             };
 
             const handleRestore = () => {
@@ -318,43 +270,14 @@
 
             const totals = useMemo(() => {
                 const inVal = tasks.reduce((acc, t) => acc + (parseFloat(t.paidAmount) || 0), 0);
-                const paidExpensesVal = expenses.reduce((acc, e) => acc + (e.isPaid ? (parseFloat(e.amount) || 0) : 0), 0);
-                const pendingExpensesVal = expenses.reduce((acc, e) => acc + (!e.isPaid ? (parseFloat(e.amount) || 0) : 0), 0);
-                
+                const outVal = expenses.reduce((acc, e) => acc + (parseFloat(e.amount) || 0), 0);
                 const pendingVal = tasks.reduce((acc, t) => {
                     const diff = (parseFloat(t.totalAmount) || 0) - (parseFloat(t.paidAmount) || 0);
                     return acc + (diff > 0 ? diff : 0);
                 }, 0);
-                
                 const potentialIn = tasks.reduce((acc, t) => acc + (parseFloat(t.totalAmount) || 0), 0);
-                const totalOutReal = expenses.reduce((acc, e) => acc + (parseFloat(e.amount) || 0), 0);
-
-                return { 
-                    in: inVal, 
-                    out: paidExpensesVal, 
-                    bal: inVal - paidExpensesVal, 
-                    pending: pendingVal, 
-                    potential: potentialIn - totalOutReal,
-                    pendingExpenses: pendingExpensesVal
-                };
+                return { in: inVal, out: outVal, bal: inVal - outVal, pending: pendingVal, potential: potentialIn - outVal };
             }, [tasks, expenses]);
-
-            const handlePayExpense = (id) => {
-                setExpenses(expenses.map(e => e.id === id ? { ...e, isPaid: true } : e));
-                showAlert("✅ GASTO LIQUIDADO");
-            };
-
-            const handleRepartirYLiquidar = () => {
-                const confirmacion = confirm(`⚠️ ¿ESTÁS SEGURO DE LIQUIDAR TODO?\n\nSe pondrán a cero los cobros y gastos registrados.\n\nReparto actual: ${(totals.bal / 2).toFixed(2)}€ para cada uno.`);
-                
-                if (confirmacion) {
-                    setTasks(tasks.map(t => ({ ...t, paidAmount: '0', totalAmount: t.status === 'archived' ? '0' : t.totalAmount })));
-                    setExpenses([]);
-                    showAlert("✅ BALANCE LIQUIDADO A CERO");
-                }
-            };
-
-            const pendingCount = tasks.filter(t => t.status === 'pending').length;
 
             return (
                 <div className="min-h-screen flex flex-col pb-20 max-w-md mx-auto relative">
@@ -367,13 +290,9 @@
                     <header className="bg-slate-900/80 backdrop-blur-md p-6 sticky top-0 z-50 flex justify-between items-center border-b border-white/5">
                         <div className="flex items-center gap-3">
                             <SVGIcon name="hammer" color="#3b82f6" size={28} />
-                            <div className="flex flex-col">
-                                <h1 className="font-black text-xl italic uppercase text-white tracking-tighter leading-none">FONTANERIA</h1>
-                                <h1 className="font-black text-xl italic uppercase text-blue-400 tracking-tighter leading-none">JUMIANJE</h1>
-                            </div>
-                            <button onClick={sendPendingListWhatsApp} className="wa-header-btn btn-press ml-2">
-                                <SVGIcon name="whatsapp" color="white" size={22} />
-                                {pendingCount > 0 && <div className="wa-header-badge">{pendingCount}</div>}
+                            <h1 className="font-black text-xl italic uppercase text-white tracking-tighter">FONTANERIA JUMIAN</h1>
+                            <button onClick={sendPendingListWhatsApp} className="btn-press ml-1 bg-green-600/20 p-2 rounded-full border border-green-500/30">
+                                <SVGIcon name="whatsapp" color="#22c55e" size={22} />
                             </button>
                         </div>
                         <div className="flex gap-4">
@@ -405,29 +324,30 @@
                         {view === 'backups' ? (
                             <div className="space-y-6">
                                 <div className="copy-section-card space-y-4">
-                                    <h3 className="text-sm font-black uppercase text-white">COMPARTIR TODO</h3>
+                                    <h3 className="text-sm font-black uppercase text-white">COMPARTIR LISTADO COMPLETO</h3>
                                     <button onClick={sendWhatsAppBackup} className="w-full bg-[#2e7d32] hover:bg-green-700 p-5 rounded-2xl flex items-center justify-center gap-3 transition-colors btn-press">
                                         <SVGIcon name="messageSquare" size={22} color="white" />
-                                        <span className="font-black text-[12px] text-white">ENVIAR JSON POR WHATSAPP</span>
+                                        <span className="font-black text-[12px] text-white">ENVIAR TODO (JSON WhatsApp)</span>
                                     </button>
                                     
                                     <div className="grid grid-cols-2 gap-3">
                                         <button onClick={downloadBackup} className="bg-blue-700 p-5 rounded-[1.5rem] flex flex-col items-center gap-2 btn-press">
                                             <SVGIcon name="download" size={24} color="white" />
-                                            <span className="text-[9px] font-black uppercase text-white">DESCARGAR ARCHIVO</span>
+                                            <span className="text-[9px] font-black uppercase text-white">DESCARGAR JSON</span>
                                         </button>
-                                        <button onClick={() => showAlert("SISTEMA ACTUALIZADO")} className="bg-[#2c3444] p-5 rounded-[1.5rem] flex flex-col items-center gap-2 btn-press">
+                                        <button onClick={() => showAlert("BACKUP DE CÓDIGO GENERADO")} className="bg-[#2c3444] p-5 rounded-[1.5rem] flex flex-col items-center gap-2 btn-press">
                                             <SVGIcon name="shield" size={24} color="#94a3b8" />
-                                            <span className="text-[9px] font-black uppercase text-white">ESTADO SEGURO</span>
+                                            <span className="text-[9px] font-black uppercase text-white">BACKUP CÓDIGO</span>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div className="copy-section-card space-y-6">
                                     <h3 className="text-lg font-black uppercase text-white">RESTAURAR</h3>
+                                    
                                     <div className="dotted-upload" onClick={() => document.getElementById('fileInput').click()}>
                                         <SVGIcon name="file" size={32} color="#3b82f6" />
-                                        <span className="text-[10px] font-black uppercase text-slate-400">ELEGIR ARCHIVO .JSON</span>
+                                        <span className="text-[10px] font-black uppercase text-slate-400">ELEGIR ARCHIVO</span>
                                         <input type="file" id="fileInput" className="hidden" onChange={(e) => {
                                             const file = e.target.files[0];
                                             if (file) {
@@ -437,11 +357,19 @@
                                             }
                                         }} />
                                     </div>
+
                                     <div className="space-y-4">
                                         <div className="bg-[#121212] rounded-3xl p-4 border border-white/5">
-                                            <textarea className="w-full h-32 bg-transparent border-none text-xs text-slate-400 no-scrollbar" placeholder="Pegar código de backup aquí..." value={restoreCode} onChange={(e) => setRestoreCode(e.target.value)} />
+                                            <textarea 
+                                                className="w-full h-32 bg-transparent border-none text-xs text-slate-400 no-scrollbar"
+                                                placeholder="Pegar código de WhatsApp aquí..."
+                                                value={restoreCode}
+                                                onChange={(e) => setRestoreCode(e.target.value)}
+                                            />
                                         </div>
-                                        <button onClick={handleRestore} className="w-full bg-blue-700 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-wider btn-press">RESTAURAR AHORA</button>
+                                        <button onClick={handleRestore} className="w-full bg-blue-700 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-wider btn-press">
+                                            RESTAURAR AHORA
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -449,75 +377,25 @@
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-white/5 p-4 rounded-2xl text-center">
-                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Total Cobrado</p>
+                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Cobrado</p>
                                         <h2 className="text-xl font-black text-green-500">{totals.in.toFixed(2)}€</h2>
                                     </div>
                                     <div className="bg-white/5 p-4 rounded-2xl text-center">
-                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Gastos Pagados</p>
+                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Gastos</p>
                                         <h2 className="text-xl font-black text-red-500">{totals.out.toFixed(2)}€</h2>
                                     </div>
                                 </div>
-                                
+                                <div className="bg-white/5 p-4 rounded-2xl text-center">
+                                    <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pendiente de Cobro</p>
+                                    <h2 className="text-xl font-black text-blue-400">{totals.pending.toFixed(2)}€</h2>
+                                </div>
                                 <div className="bg-purple-600/20 p-6 rounded-[2rem] border border-purple-500/30 text-center shadow-xl">
-                                    <p className="text-[10px] font-black text-purple-400 uppercase mb-1">Beneficio Neto Real</p>
+                                    <p className="text-[10px] font-black text-purple-400 uppercase mb-1">Beneficio Neto</p>
                                     <h2 className="text-3xl font-black text-white">{totals.bal.toFixed(2)}€</h2>
                                 </div>
-
-                                <button onClick={handleRepartirYLiquidar} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-[2rem] shadow-xl border border-white/10 btn-press mt-2 mb-4">
-                                    <div className="flex flex-col items-center gap-1">
-                                        <div className="flex items-center gap-2">
-                                            <SVGIcon name="users" size={24} color="white" />
-                                            <span className="font-black text-xs uppercase text-white tracking-widest">Repartir y Liquidar</span>
-                                        </div>
-                                        <div className="mt-1 bg-black/30 px-4 py-1 rounded-full">
-                                            <span className="text-[14px] font-black text-white">
-                                                {totals.bal.toFixed(2)}€ / 2 = <span className="text-green-400">{(totals.bal / 2).toFixed(2)}€</span>
-                                            </span>
-                                        </div>
-                                        <span className="text-[8px] text-indigo-200 uppercase font-bold mt-2 opacity-60">Pulsa para poner todo a cero</span>
-                                    </div>
-                                </button>
-                                
-                                <div className="grid grid-cols-2 gap-3 opacity-60">
-                                    <div className="bg-white/5 p-4 rounded-2xl text-center border border-dashed border-blue-500/20">
-                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pte. Cobro</p>
-                                        <h2 className="text-sm font-black text-blue-400">{totals.pending.toFixed(2)}€</h2>
-                                    </div>
-                                    <div className="bg-white/5 p-4 rounded-2xl text-center border border-dashed border-red-500/20">
-                                        <p className="text-[9px] font-black text-slate-500 uppercase mb-1">Pte. Pago (Gasto)</p>
-                                        <h2 className="text-sm font-black text-red-400">{totals.pendingExpenses.toFixed(2)}€</h2>
-                                    </div>
-                                </div>
-
-                                <div className="mt-6 space-y-3">
-                                    <div className="flex justify-between items-center px-2">
-                                        <h3 className="text-xs font-black uppercase text-slate-500">Desglose de Gastos</h3>
-                                    </div>
-                                    <div className="space-y-2">
-                                        {expenses.length === 0 ? (
-                                            <p className="text-center py-6 text-[10px] text-slate-600 font-bold uppercase">Sin gastos registrados</p>
-                                        ) : expenses.map(exp => (
-                                            <div key={exp.id} className={`flex items-center justify-between p-4 rounded-2xl transition-all ${exp.isPaid ? 'bg-slate-800/30 opacity-40' : 'bg-red-500/10 border border-red-500/20'}`}>
-                                                <div className="flex-1">
-                                                    <p className="text-[10px] font-black text-white uppercase tracking-wider">{exp.concept}</p>
-                                                    <div className="flex items-center gap-2">
-                                                        <p className="text-lg font-black text-red-400">{exp.amount.toFixed(2)}€</p>
-                                                        {exp.isPaid && <span className="bg-green-500/20 text-green-500 text-[8px] px-2 py-1 rounded font-black">PAGADO</span>}
-                                                    </div>
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    {!exp.isPaid && (
-                                                        <button onClick={() => handlePayExpense(exp.id)} className="bg-green-600 p-3 rounded-xl btn-press">
-                                                            <SVGIcon name="check" size={18} color="white" />
-                                                        </button>
-                                                    )}
-                                                    <button onClick={() => { if(confirm("¿Eliminar?")) setExpenses(expenses.filter(e => e.id !== exp.id)); }} className="bg-slate-800 p-3 rounded-xl btn-press">
-                                                        <SVGIcon name="trash" size={18} color="#ef4444" />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                <div className="bg-emerald-600/20 p-6 rounded-[2rem] border border-emerald-500/30 text-center shadow-xl">
+                                    <p className="text-[10px] font-black text-emerald-400 uppercase mb-1">Ganancia Potencial</p>
+                                    <h2 className="text-3xl font-black text-white">{totals.potential.toFixed(2)}€</h2>
                                 </div>
                             </div>
                         ) : (
@@ -538,6 +416,7 @@
                                                     <button onClick={() => handleEditTask(task)} className="btn-press p-2 hover:bg-white/10 rounded-full transition-colors">
                                                         <SVGIcon name="edit" color="#60a5fa" size={22} />
                                                     </button>
+
                                                     {view !== 'pending' && (
                                                         <button onClick={() => setTasks(tasks.map(t => t.id === task.id ? { ...t, status: view === 'archived' ? 'completed' : 'pending' } : t))} className="btn-press p-1">
                                                             <SVGIcon name="undo" color="#94a3b8" size={24} />
@@ -546,17 +425,15 @@
                                                     {task.phone && (
                                                         <button onClick={() => {
                                                             const cleanPhone = task.phone.replace(/\D/g, '');
-                                                            const fullPhone = cleanPhone.length === 9 ? `34${cleanPhone}` : cleanPhone;
-                                                            const msgText = "Hola, ¿estás en casa para pasar a ver lo de fontanería? Gracias.";
-                                                            const encodedMsg = encodeURIComponent(msgText);
-                                                            const waUrl = `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodedMsg}`;
-                                                            openWhatsApp(waUrl);
+                                                            const prefix = cleanPhone.startsWith('34') ? '' : '34';
+                                                            window.open(`https://wa.me/${prefix}${cleanPhone}`, '_blank');
                                                         }} className="btn-press p-1">
                                                             <SVGIcon name="whatsapp" color="#22c55e" size={28} />
                                                         </button>
                                                     )}
                                                 </div>
                                             </div>
+                                            
                                             {cleanMaterials(task.materials).length > 0 && (
                                                 <div className="materials-box">
                                                     {cleanMaterials(task.materials).map((m, i) => (
@@ -567,18 +444,22 @@
                                                     ))}
                                                 </div>
                                             )}
+
                                             <div className="flex gap-4 mt-4">
-                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" onClick={() => setEditMoney({ id: task.id, type: 'totalAmount', value: task.totalAmount })}>
+                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" 
+                                                     onClick={() => setEditMoney({ id: task.id, type: 'totalAmount', value: task.totalAmount })}>
                                                     <p className="text-[8px] uppercase text-white/30">PVP</p>
                                                     <p className="font-bold">{task.totalAmount}€</p>
                                                 </div>
-                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" onClick={() => setEditCobrado({ id: task.id, currentPaid: task.paidAmount, totalPVP: task.totalAmount })}>
+                                                <div className="flex-1 text-center bg-black/20 p-2 rounded-xl" 
+                                                     onClick={() => setEditCobrado({ id: task.id, currentPaid: task.paidAmount, totalPVP: task.totalAmount })}>
                                                     <p className="text-[8px] uppercase text-white/30">Cobrado</p>
                                                     <p className="font-bold text-green-400">{task.paidAmount}€</p>
                                                 </div>
                                             </div>
+
                                             <div className="mt-4 flex gap-2">
-                                                {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-green-700">Hecho</button>}
+                                                {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-green-700">Finalizar</button>}
                                                 {view === 'completed' && <button onClick={() => handleArchivar(task)} className="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-blue-700">Archivar</button>}
                                                 <button onClick={() => { if(confirm("¿Eliminar?")) setTasks(tasks.filter(t=>t.id!==task.id)); }} className="p-3 bg-red-900/40 text-red-500 rounded-xl flex items-center justify-center transition-colors hover:bg-red-800/60">
                                                     <SVGIcon name="trash" size={16} color="#ef4444" />
@@ -594,30 +475,40 @@
                     {editCobrado && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
-                                <h3 className="text-xs font-black text-blue-400 uppercase mb-4">Añadir Pago</h3>
+                                <h3 className="text-xs font-black text-blue-400 uppercase mb-4">Gestión de Cobro</h3>
                                 <div className="grid grid-cols-2 gap-2 mb-6">
                                     <div className="bg-black/20 p-3 rounded-xl">
-                                        <p className="text-[8px] text-white/40 uppercase">PVP</p>
+                                        <p className="text-[8px] text-white/40 uppercase">PVP Total</p>
                                         <p className="text-lg font-black text-white">{editCobrado.totalPVP}€</p>
                                     </div>
                                     <div className="bg-black/20 p-3 rounded-xl">
-                                        <p className="text-[8px] text-white/40 uppercase">Pagado</p>
+                                        <p className="text-[8px] text-white/40 uppercase">Ya Cobrado</p>
                                         <p className="text-lg font-black text-green-500">{editCobrado.currentPaid}€</p>
                                     </div>
                                 </div>
                                 <div className="space-y-2 mb-6 text-left">
-                                    <p className="text-[9px] uppercase text-slate-500 font-bold ml-2">¿Cuánto entrega?</p>
-                                    <input type="number" autoFocus placeholder="0" onFocus={(e) => e.target.select()} className="w-full text-3xl font-black text-center p-4 rounded-xl bg-black/40" id="entregaInput" />
+                                    <p className="text-[9px] uppercase text-slate-500 font-bold ml-2">Añadir Entrega a Cuenta</p>
+                                    <input 
+                                        type="number" 
+                                        autoFocus
+                                        placeholder="0.00"
+                                        onFocus={(e) => e.target.select()}
+                                        className="w-full text-3xl font-black text-center p-4 rounded-xl bg-black/40" 
+                                        id="entregaInput"
+                                    />
                                 </div>
                                 <div className="flex gap-2">
                                     <button onClick={() => setEditCobrado(null)} className="flex-1 py-3 text-white/40 font-bold">Cerrar</button>
-                                    <button onClick={() => {
+                                    <button 
+                                        onClick={() => {
                                             const entrega = parseFloat(document.getElementById('entregaInput').value) || 0;
                                             const nuevoTotal = (parseFloat(editCobrado.currentPaid) || 0) + entrega;
                                             setTasks(tasks.map(t => t.id === editCobrado.id ? {...t, paidAmount: nuevoTotal.toString()} : t));
                                             setEditCobrado(null);
-                                            showAlert(`✅ +${entrega}€ SUMADOS`);
-                                        }} className="flex-1 bg-green-600 py-3 rounded-xl font-black uppercase text-xs">Ok</button>
+                                            showAlert(`✅ +${entrega}€ AÑADIDOS`);
+                                        }} 
+                                        className="flex-1 bg-green-600 py-3 rounded-xl font-black uppercase text-xs"
+                                    >Sumar Cobro</button>
                                 </div>
                             </div>
                         </div>
@@ -626,13 +517,23 @@
                     {editMoney && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
-                                <input type="number" autoFocus onFocus={(e) => e.target.select()} className="w-full text-4xl font-black text-center p-4 rounded-xl mb-4 bg-black/40" value={editMoney.value} onChange={(e) => setEditMoney({...editMoney, value: e.target.value})} />
+                                <input 
+                                    type="number" 
+                                    autoFocus
+                                    onFocus={(e) => e.target.select()}
+                                    className="w-full text-4xl font-black text-center p-4 rounded-xl mb-4 bg-black/40" 
+                                    value={editMoney.value}
+                                    onChange={(e) => setEditMoney({...editMoney, value: e.target.value})}
+                                />
                                 <div className="flex gap-2">
                                     <button onClick={() => setEditMoney(null)} className="flex-1 py-3 text-white/40 font-bold">Cerrar</button>
-                                    <button onClick={() => {
+                                    <button 
+                                        onClick={() => {
                                             setTasks(tasks.map(t => t.id === editMoney.id ? {...t, [editMoney.type]: editMoney.value} : t));
                                             setEditMoney(null);
-                                        }} className="flex-1 bg-blue-600 py-3 rounded-xl font-black uppercase text-xs">Guardar</button>
+                                        }} 
+                                        className="flex-1 bg-blue-600 py-3 rounded-xl font-black uppercase text-xs"
+                                    >Ok</button>
                                 </div>
                             </div>
                         </div>
@@ -641,24 +542,38 @@
                     {showForm && (
                         <div className="fixed inset-0 bg-black/90 z-[200] p-6 flex items-center justify-center backdrop-blur-md">
                             <form onSubmit={handleSaveTask} className="bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 space-y-4 border border-white/10 shadow-2xl">
-                                <h2 className="font-black uppercase text-blue-400 mb-2">{editingId ? 'Editar Cliente' : 'Nuevo Cliente'}</h2>
+                                <h2 className="font-black uppercase text-blue-400 mb-2">{editingId ? 'Editar Cliente' : 'Nuevo Trabajo'}</h2>
                                 <input placeholder="Nombre Cliente" className="w-full p-4 rounded-xl" value={formData.clientName} onChange={e=>handleInputChange('clientName', e.target.value)} required />
                                 <input type="tel" placeholder="Teléfono" className="w-full p-4 rounded-xl" value={formData.phone} onChange={e=>handleInputChange('phone', e.target.value)} />
-                                <input placeholder="¿Qué tarea?" className="w-full p-4 rounded-xl" value={formData.jobType} onChange={e=>handleInputChange('jobType', e.target.value)} />
-                                <textarea placeholder="Materiales o Notas..." className="w-full p-4 rounded-xl h-20" value={formData.materials} onChange={e=>handleInputChange('materials', e.target.value)} />
+                                <input placeholder="¿Qué hay que hacer?" className="w-full p-4 rounded-xl" value={formData.jobType} onChange={e=>handleInputChange('jobType', e.target.value)} />
+                                <textarea placeholder="Materiales / Notas..." className="w-full p-4 rounded-xl h-20" value={formData.materials} onChange={e=>handleInputChange('materials', e.target.value)} />
                                 <div className="flex gap-4">
                                     <div className="flex-1">
                                         <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Total PVP</p>
-                                        <input placeholder="0" className="w-full p-4 rounded-xl text-center" value={formData.totalAmount} onFocus={(e) => e.target.select()} onChange={e=>setFormData({...formData, totalAmount:e.target.value})} />
+                                        <input 
+                                            placeholder="PVP" 
+                                            className="w-full p-4 rounded-xl text-center" 
+                                            value={formData.totalAmount} 
+                                            onFocus={(e) => e.target.select()}
+                                            onChange={e=>setFormData({...formData, totalAmount:e.target.value})} 
+                                        />
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-[9px] uppercase text-slate-500 mb-1 ml-2 font-bold">Cobrado</p>
-                                        <input placeholder="0" className="w-full p-4 rounded-xl text-center" value={formData.paidAmount} onFocus={(e) => e.target.select()} onChange={e=>setFormData({...formData, paidAmount:e.target.value})} />
+                                        <input 
+                                            placeholder="Cobrado" 
+                                            className="w-full p-4 rounded-xl text-center" 
+                                            value={formData.paidAmount} 
+                                            onFocus={(e) => e.target.select()}
+                                            onChange={e=>setFormData({...formData, paidAmount:e.target.value})} 
+                                        />
                                     </div>
                                 </div>
                                 <div className="flex gap-2 mt-4">
                                     <button type="button" onClick={()=>{setShowForm(false); setEditingId(null);}} className="flex-1 bg-slate-800 p-4 rounded-xl font-bold uppercase text-xs">Cancelar</button>
-                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black uppercase text-xs">{editingId ? 'ACTUALIZAR' : 'CREAR'}</button>
+                                    <button type="submit" className="flex-1 bg-blue-600 p-4 rounded-xl font-black uppercase text-xs">
+                                        {editingId ? 'ACTUALIZAR' : 'GUARDAR'}
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -667,12 +582,12 @@
                     {showExpenseForm && (
                         <div className="fixed inset-0 bg-black/90 z-[200] p-6 flex items-center justify-center backdrop-blur-md">
                             <div className="bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 space-y-4 border border-white/10 text-center shadow-2xl">
-                                <h3 className="font-black text-red-500 uppercase">Nuevo Gasto</h3>
-                                <input placeholder="¿En qué?" className="w-full p-4 rounded-xl" value={expenseData.concept} onChange={e=>setExpenseData({...expenseData, concept:e.target.value.toUpperCase()})} />
+                                <h3 className="font-black text-red-500 uppercase">Anotar Gasto</h3>
+                                <input placeholder="Concepto" className="w-full p-4 rounded-xl" value={expenseData.concept} onChange={e=>setExpenseData({...expenseData, concept:e.target.value.toUpperCase()})} />
                                 <input placeholder="Importe €" className="w-full p-4 rounded-xl text-center text-2xl font-black" value={expenseData.amount} onFocus={(e) => e.target.select()} onChange={e=>setExpenseData({...expenseData, amount:e.target.value})} />
                                 <button onClick={()=>{
                                     if(!expenseData.amount) return;
-                                    setExpenses([{...expenseData, id:Date.now(), amount: parseFloat(expenseData.amount), isPaid: false}, ...expenses]);
+                                    setExpenses([{...expenseData, id:Date.now(), amount: parseFloat(expenseData.amount)}, ...expenses]);
                                     setShowExpenseForm(false);
                                     setExpenseData({concept:'', amount:''});
                                     showAlert("✅ GASTO REGISTRADO");
@@ -692,4 +607,3 @@
 </html>
 
 ```
-
