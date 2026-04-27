@@ -243,14 +243,29 @@
                     return;
                 }
 
-                let text = `🛠️ *PENDIENTES - FONTANERIA JUMIAN* 🛠️\n\n`;
+                let text = `🛠️ *FONTANERIA JUMIAN* 🛠️\n`;
+                text += `━━━━━━━━━━━━━━\n`;
+                text += `📋 *LISTADO DE TRABAJOS PENDIENTES*\n\n`;
+
                 pendingTasks.forEach((t, i) => {
-                    text += `*${i+1}. ${t.clientName}*\n`;
-                    if (t.phone) text += `📞 ${t.phone}\n`;
-                    if (t.jobType) text += `📝 ${t.jobType}\n`;
-                    if (t.materials) text += `📦 NOTAS: ${t.materials.replace(/\n/g, ', ')}\n`;
-                    text += `──────────────────\n`;
+                    text += `📌 *TRABAJO #${i+1}*\n`;
+                    text += `👤 *Cliente:* ${t.clientName}\n`;
+                    if (t.phone) text += `📞 *Teléfono:* ${t.phone}\n`;
+                    if (t.jobType) text += `🛠️ *Tarea:* ${t.jobType}\n`;
+                    
+                    if (t.materials) {
+                        const mList = cleanMaterials(t.materials);
+                        if (mList.length > 0) {
+                            text += `📦 *Materiales/Notas:*\n`;
+                            mList.forEach(m => {
+                                text += `   - ${m}\n`;
+                            });
+                        }
+                    }
+                    text += `──────────────────\n\n`;
                 });
+
+                text += `⚡ _Generado por Gestor Pro_`;
 
                 const msg = encodeURIComponent(text);
                 window.open(`https://wa.me/?text=${msg}`, '_blank');
@@ -296,17 +311,12 @@
                 showAlert("✅ GASTO LIQUIDADO");
             };
 
-            // Función para repartir y liquidar todo
             const handleRepartirYLiquidar = () => {
                 const confirmacion = confirm(`⚠️ ¿ESTÁS SEGURO DE LIQUIDAR TODO?\n\nSe pondrán a cero los cobros y gastos registrados.\n\nReparto actual: ${(totals.bal / 2).toFixed(2)}€ para cada uno.`);
                 
                 if (confirmacion) {
-                    // Ponemos a cero el cobrado de todos los trabajos
                     setTasks(tasks.map(t => ({ ...t, paidAmount: '0', totalAmount: t.status === 'archived' ? '0' : t.totalAmount })));
-                    // Eliminamos los gastos ya pagados y dejamos los pendientes si se quiere, o borramos todo.
-                    // Para una liquidación total real, borramos todos los gastos.
                     setExpenses([]);
-                    
                     showAlert("✅ BALANCE LIQUIDADO A CERO");
                 }
             };
@@ -414,11 +424,7 @@
                                     <h2 className="text-3xl font-black text-white">{totals.bal.toFixed(2)}€</h2>
                                 </div>
 
-                                {/* BOTÓN DE REPARTO Y LIQUIDACIÓN */}
-                                <button 
-                                    onClick={handleRepartirYLiquidar}
-                                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-[2rem] shadow-xl border border-white/10 btn-press mt-2 mb-4"
-                                >
+                                <button onClick={handleRepartirYLiquidar} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-[2rem] shadow-xl border border-white/10 btn-press mt-2 mb-4">
                                     <div className="flex flex-col items-center gap-1">
                                         <div className="flex items-center gap-2">
                                             <SVGIcon name="users" size={24} color="white" />
@@ -502,7 +508,8 @@
                                                         <button onClick={() => {
                                                             const cleanPhone = task.phone.replace(/\D/g, '');
                                                             const prefix = cleanPhone.startsWith('34') ? '' : '34';
-                                                            window.open(`https://wa.me/${prefix}${cleanPhone}`, '_blank');
+                                                            const customMsg = encodeURIComponent("Buenas, ¿estás en casa para acercarnos en un rato a ver el trabajo? Gracias");
+                                                            window.open(`https://wa.me/${prefix}${cleanPhone}?text=${customMsg}`, '_blank');
                                                         }} className="btn-press p-1">
                                                             <SVGIcon name="whatsapp" color="#22c55e" size={28} />
                                                         </button>
@@ -543,7 +550,6 @@
                         )}
                     </main>
 
-                    {/* MODALES MANTENIDOS */}
                     {editCobrado && (
                         <div className="fixed inset-0 bg-black/80 z-[300] p-6 flex items-center justify-center backdrop-blur-sm">
                             <div className="bg-slate-900 w-full max-w-xs rounded-[2rem] p-6 border border-white/10 text-center shadow-2xl">
@@ -645,3 +651,4 @@
 </html>
 
 ```
+
