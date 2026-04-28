@@ -72,6 +72,7 @@
         .card-pending { background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(59, 130, 246, 0.2); }
         .card-completed { background: linear-gradient(145deg, #065f46 0%, #042f2e 100%); border: 1px solid rgba(16, 185, 129, 0.2); }
         .card-archived { background: linear-gradient(145deg, #475569 0%, #1e293b 100%); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .card-deleted-pending { background: linear-gradient(145deg, #450a0a 0%, #1a0505 100%); border: 1px solid rgba(239, 68, 68, 0.3); opacity: 0.8; }
 
         .client-name { font-weight: 900; text-transform: uppercase; }
 
@@ -170,6 +171,9 @@
             const [editCobrado, setEditCobrado] = useState(null);
             const [restoreCode, setRestoreCode] = useState('');
             
+            // NUEVO ESTADO: Lista de IDs de tareas marcadas para borrado (no borradas aún)
+            const [pendientesBorrado, setPendientesBorrado] = useState([]);
+
             const [formData, setFormData] = useState({
                 clientName: '', phone: '', address: '', jobType: '', notes: '', materials: '', totalAmount: '', paidAmount: ''
             });
@@ -181,8 +185,10 @@
                     try {
                         const t = localStorage.getItem('pro_tasks_v13');
                         const e = localStorage.getItem('pro_expenses_v13');
+                        const p = localStorage.getItem('pro_pendientes_borrado_v13');
                         if(t) setTasks(JSON.parse(t));
                         if(e) setExpenses(JSON.parse(e));
+                        if(p) setPendientesBorrado(JSON.parse(p));
                     } catch (err) { console.error(err); }
                 };
                 loadData();
@@ -191,7 +197,8 @@
             useEffect(() => {
                 localStorage.setItem('pro_tasks_v13', JSON.stringify(tasks));
                 localStorage.setItem('pro_expenses_v13', JSON.stringify(expenses));
-            }, [tasks, expenses]);
+                localStorage.setItem('pro_pendientes_borrado_v13', JSON.stringify(pendientesBorrado));
+            }, [tasks, expenses, pendientesBorrado]);
 
             const showAlert = (msg) => {
                 setAlertMsg(msg);
@@ -207,7 +214,6 @@
                 setFormData({ ...formData, [field]: value.toUpperCase() });
             };
 
-            // SOLUCIÓN PARA WHATSAPP: Abrir en la capa superior (_top) para evitar bloqueos en el visor
             const openWhatsApp = (url) => {
                 window.open(url, '_top');
             };
@@ -254,8 +260,19 @@
                 showAlert("✅ TRABAJO ARCHIVADO");
             };
 
+            // MODIFICACIÓN: La función de borrar ahora solo añade a la lista de espera
+            const marcarParaBorrar = (id) => {
+                if (pendientesBorrado.includes(id)) {
+                    setPendientesBorrado(pendientesBorrado.filter(pid => pid !== id));
+                    showAlert("🔄 CLIENTE RESTAURADO");
+                } else {
+                    setPendientesBorrado([...pendientesBorrado, id]);
+                    showAlert("🚩 MARCADO PARA BORRAR AL LIQUIDAR");
+                }
+            };
+
             const downloadBackup = () => {
-                const data = JSON.stringify({tasks, expenses});
+                const data = JSON.stringify({tasks, expenses, pendientesBorrado});
                 const blob = new Blob([data], {type: 'application/json'});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -265,7 +282,7 @@
             };
 
             const sendWhatsAppBackup = () => {
-                const data = JSON.stringify({tasks, expenses});
+                const data = JSON.stringify({tasks, expenses, pendientesBorrado});
                 const msg = encodeURIComponent("BACKUP FONTANERIA JUMIANJE:\n\n" + data);
                 openWhatsApp(`https://api.whatsapp.com/send?text=${msg}`);
             };
@@ -307,6 +324,7 @@
                     const parsed = JSON.parse(restoreCode);
                     if(parsed.tasks) setTasks(parsed.tasks);
                     if(parsed.expenses) setExpenses(parsed.expenses);
+                    if(parsed.pendientesBorrado) setPendientesBorrado(parsed.pendientesBorrado);
                     showAlert("✅ DATOS RESTAURADOS CORRECTAMENTE");
                     setRestoreCode('');
                 } catch(e) {
@@ -315,6 +333,7 @@
             };
 
             const totals = useMemo(() => {
+                // El balance se calcula sobre TODAS las tareas, incluidas las marcadas para borrar
                 const inVal = tasks.reduce((acc, t) => acc + (parseFloat(t.paidAmount) || 0), 0);
                 const paidExpensesVal = expenses.reduce((acc, e) => acc + (e.isPaid ? (parseFloat(e.amount) || 0) : 0), 0);
                 const pendingExpensesVal = expenses.reduce((acc, e) => acc + (!e.isPaid ? (parseFloat(e.amount) || 0) : 0), 0);
@@ -342,13 +361,26 @@
                 showAlert("✅ GASTO LIQUIDADO");
             };
 
+            // MODIFICACIÓN: Aquí es donde se borra todo realmente
             const handleRepartirYLiquidar = () => {
-                const confirmacion = confirm(`⚠️ ¿ESTÁS SEGURO DE LIQUIDAR TODO?\n\nSe pondrán a cero los cobros y gastos registrados.\n\nReparto actual: ${(totals.bal / 2).toFixed(2)}€ para cada uno.`);
+                const numABorrar = pendientesBorrado.length;
+                const confirmacion = confirm(`⚠️ ¿ESTÁS SEGURO DE LIQUIDAR Y REPARTIR?\n\n- Se borrarán definitivamente ${numABorrar} clientes marcados.\n- Se pondrán a cero los cobros actuales.\n- Se eliminarán los gastos registrados.\n\nReparto actual: ${(totals.bal / 2).toFixed(2)}€ para cada uno.`);
                 
                 if (confirmacion) {
-                    setTasks(tasks.map(t => ({ ...t, paidAmount: '0', totalAmount: t.status === 'archived' ? '0' : t.totalAmount })));
+                    // 1. Eliminar físicamente los clientes que estaban en la lista de espera
+                    const nuevasTareas = tasks.filter(t => !pendientesBorrado.includes(t.id));
+                    
+                    // 2. Resetear cobros y gastos de los que quedan
+                    const tareasReseteadas = nuevasTareas.map(t => ({ 
+                        ...t, 
+                        paidAmount: '0', 
+                        totalAmount: t.status === 'archived' ? '0' : t.totalAmount 
+                    }));
+
+                    setTasks(tareasReseteadas);
                     setExpenses([]);
-                    showAlert("✅ BALANCE LIQUIDADO A CERO");
+                    setPendientesBorrado([]); // Limpiar lista de espera
+                    showAlert("✅ BALANCE Y ARCHIVO LIQUIDADOS");
                 }
             };
 
@@ -472,9 +504,16 @@
                                                 {totals.bal.toFixed(2)}€ / 2 = <span className="text-green-400">{(totals.bal / 2).toFixed(2)}€</span>
                                             </span>
                                         </div>
-                                        <span className="text-[8px] text-indigo-200 uppercase font-bold mt-2 opacity-60">Pulsa para poner todo a cero</span>
+                                        <span className="text-[8px] text-indigo-200 uppercase font-bold mt-2 opacity-60">Pulsa para liquidar archivo y balance</span>
                                     </div>
                                 </button>
+
+                                {pendientesBorrado.length > 0 && (
+                                    <div className="bg-red-500/20 border border-red-500/40 p-4 rounded-2xl flex justify-between items-center">
+                                        <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Clientes para borrar:</p>
+                                        <span className="bg-red-600 text-white font-black px-3 py-1 rounded-full text-xs">{pendientesBorrado.length}</span>
+                                    </div>
+                                )}
                                 
                                 <div className="grid grid-cols-2 gap-3 opacity-60">
                                     <div className="bg-white/5 p-4 rounded-2xl text-center border border-dashed border-blue-500/20">
@@ -522,13 +561,16 @@
                             <div className="space-y-4">
                                 {tasks.filter(t => t.status === view).map(task => {
                                     const deuda = (parseFloat(task.totalAmount) || 0) - (parseFloat(task.paidAmount) || 0);
+                                    const isMarcadoBorrar = pendientesBorrado.includes(task.id);
+
                                     return (
-                                        <div key={task.id} className={`${view === 'pending' ? 'card-pending' : view === 'completed' ? 'card-completed' : 'card-archived'} rounded-[2rem] p-6 shadow-xl relative`}>
+                                        <div key={task.id} className={`${isMarcadoBorrar ? 'card-deleted-pending' : (view === 'pending' ? 'card-pending' : view === 'completed' ? 'card-completed' : 'card-archived')} rounded-[2rem] p-6 shadow-xl relative transition-all`}>
                                             <div className="flex justify-between items-start mb-1">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-2">
                                                         <h4 className="client-name text-lg text-white">{task.clientName}</h4>
                                                         {deuda > 0 && <span className="deuda-badge">DEBE {deuda.toFixed(0)}€</span>}
+                                                        {isMarcadoBorrar && <span className="bg-red-500 text-white text-[8px] px-2 py-0.5 rounded font-black">PARA BORRAR</span>}
                                                     </div>
                                                     <p className="text-xs text-white/40">{task.jobType}</p>
                                                 </div>
@@ -576,8 +618,10 @@
                                             <div className="mt-4 flex gap-2">
                                                 {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-green-700">Hecho</button>}
                                                 {view === 'completed' && <button onClick={() => handleArchivar(task)} className="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-blue-700">Archivar</button>}
-                                                <button onClick={() => { if(confirm("¿Eliminar?")) setTasks(tasks.filter(t=>t.id!==task.id)); }} className="p-3 bg-red-900/40 text-red-500 rounded-xl flex items-center justify-center transition-colors hover:bg-red-800/60">
-                                                    <SVGIcon name="trash" size={16} color="#ef4444" />
+                                                
+                                                {/* BOTÓN PAPELERA: Ahora marca para borrar diferido */}
+                                                <button onClick={() => marcarParaBorrar(task.id)} className={`p-3 rounded-xl flex items-center justify-center transition-colors ${isMarcadoBorrar ? 'bg-blue-600 text-white' : 'bg-red-900/40 text-red-500'}`}>
+                                                    <SVGIcon name={isMarcadoBorrar ? "undo" : "trash"} size={16} color={isMarcadoBorrar ? "white" : "#ef4444"} />
                                                 </button>
                                             </div>
                                         </div>
@@ -689,4 +733,3 @@
 </html>
 
 ```
-
