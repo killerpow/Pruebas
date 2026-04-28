@@ -170,8 +170,6 @@
             const [editMoney, setEditMoney] = useState(null); 
             const [editCobrado, setEditCobrado] = useState(null);
             const [restoreCode, setRestoreCode] = useState('');
-            
-            // NUEVO ESTADO: Lista de IDs de tareas marcadas para borrado (no borradas aún)
             const [pendientesBorrado, setPendientesBorrado] = useState([]);
 
             const [formData, setFormData] = useState({
@@ -260,7 +258,6 @@
                 showAlert("✅ TRABAJO ARCHIVADO");
             };
 
-            // MODIFICACIÓN: La función de borrar ahora solo añade a la lista de espera
             const marcarParaBorrar = (id) => {
                 if (pendientesBorrado.includes(id)) {
                     setPendientesBorrado(pendientesBorrado.filter(pid => pid !== id));
@@ -333,7 +330,6 @@
             };
 
             const totals = useMemo(() => {
-                // El balance se calcula sobre TODAS las tareas, incluidas las marcadas para borrar
                 const inVal = tasks.reduce((acc, t) => acc + (parseFloat(t.paidAmount) || 0), 0);
                 const paidExpensesVal = expenses.reduce((acc, e) => acc + (e.isPaid ? (parseFloat(e.amount) || 0) : 0), 0);
                 const pendingExpensesVal = expenses.reduce((acc, e) => acc + (!e.isPaid ? (parseFloat(e.amount) || 0) : 0), 0);
@@ -361,16 +357,12 @@
                 showAlert("✅ GASTO LIQUIDADO");
             };
 
-            // MODIFICACIÓN: Aquí es donde se borra todo realmente
             const handleRepartirYLiquidar = () => {
                 const numABorrar = pendientesBorrado.length;
                 const confirmacion = confirm(`⚠️ ¿ESTÁS SEGURO DE LIQUIDAR Y REPARTIR?\n\n- Se borrarán definitivamente ${numABorrar} clientes marcados.\n- Se pondrán a cero los cobros actuales.\n- Se eliminarán los gastos registrados.\n\nReparto actual: ${(totals.bal / 2).toFixed(2)}€ para cada uno.`);
                 
                 if (confirmacion) {
-                    // 1. Eliminar físicamente los clientes que estaban en la lista de espera
                     const nuevasTareas = tasks.filter(t => !pendientesBorrado.includes(t.id));
-                    
-                    // 2. Resetear cobros y gastos de los que quedan
                     const tareasReseteadas = nuevasTareas.map(t => ({ 
                         ...t, 
                         paidAmount: '0', 
@@ -379,7 +371,7 @@
 
                     setTasks(tareasReseteadas);
                     setExpenses([]);
-                    setPendientesBorrado([]); // Limpiar lista de espera
+                    setPendientesBorrado([]);
                     showAlert("✅ BALANCE Y ARCHIVO LIQUIDADOS");
                 }
             };
@@ -587,7 +579,8 @@
                                                         <button onClick={() => {
                                                             const cleanPhone = task.phone.replace(/\D/g, '');
                                                             const fullPhone = cleanPhone.length === 9 ? `34${cleanPhone}` : cleanPhone;
-                                                            const msgText = `Hola, soy de Fontanería JUMIANJE. ¿Estarás en casa para lo de ${task.jobType || 'tu avería'}? Gracias.`;
+                                                            // MODIFICACIÓN: Mensaje sin "soy de JUMIANJE"
+                                                            const msgText = `Hola, te aviso para saber si te va bien que nos acerquemos en un rato para lo de ${task.jobType || 'el trabajo'}. Gracias.`;
                                                             openWhatsApp(`https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(msgText)}`);
                                                         }} className="btn-press p-1">
                                                             <SVGIcon name="whatsapp" color="#22c55e" size={28} />
@@ -618,8 +611,6 @@
                                             <div className="mt-4 flex gap-2">
                                                 {view === 'pending' && <button onClick={() => setTasks(tasks.map(t=>t.id===task.id?{...t, status:'completed'}:t))} className="flex-1 bg-green-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-green-700">Hecho</button>}
                                                 {view === 'completed' && <button onClick={() => handleArchivar(task)} className="flex-1 bg-blue-600 py-3 rounded-xl font-black text-[10px] uppercase transition-colors hover:bg-blue-700">Archivar</button>}
-                                                
-                                                {/* BOTÓN PAPELERA: Ahora marca para borrar diferido */}
                                                 <button onClick={() => marcarParaBorrar(task.id)} className={`p-3 rounded-xl flex items-center justify-center transition-colors ${isMarcadoBorrar ? 'bg-blue-600 text-white' : 'bg-red-900/40 text-red-500'}`}>
                                                     <SVGIcon name={isMarcadoBorrar ? "undo" : "trash"} size={16} color={isMarcadoBorrar ? "white" : "#ef4444"} />
                                                 </button>
@@ -731,5 +722,6 @@
     </script>
 </body>
 </html>
+
 
 ```
